@@ -1,0 +1,52 @@
+/* Ocupar todo el alto disponible para centrar verticalmente */
+:host {
+  display: block;
+  height: 100%;
+}
+
+.share-card {
+  background-color: #1e293b;
+  border: none;
+  border-radius: 16px;
+  max-width: 450px;
+  width: 100%;
+}
+
+.icon-container {
+  width: 60px;
+  height: 60px;
+  background-color: rgba(25, 135, 84, 0.15); /* Fondo verde translúcido */
+  border-radius: 50%;
+}
+
+.custom-link-input {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+  color: #3b82f6; /* Color azul para el link */
+  font-family: monospace;
+  font-size: 0.9rem;
+  
+  &:focus {
+    background-color: #0f172a;
+    color: #3b82f6;
+    border-color: #3b82f6;
+    box-shadow: none;
+  }
+}
+
+.custom-wa-btn {
+  background-color: #0f766e; /* Un tono verde más oscuro/elegante */
+  border: none;
+  
+  &:hover {
+    background-color: #115e59;
+  }
+}
+
+.custom-blank-btn {
+  background-color: rgba(255, 255, 255, 0.05);
+  
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+}

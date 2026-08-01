@@ -1,0 +1,47 @@
+.custom-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  z-index: 1000;
+  max-height: 250px;
+  overflow-y: auto;
+  margin-top: 4px;
+
+  .dropdown-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+      background-color: #f8f9fa;
+    }
+
+    &:last-child {
+      border-bottom: none !important;
+    }
+  }
+}
+
+.custom-date-sigloc {
+  color: #003770;
+  font-weight: 500;
+  border: 1px solid #ced4da;
+  
+  &:focus {
+    border-color: #2a71b9;
+    box-shadow: 0 0 0 0.25rem rgba(42, 113, 185, 0.25);
+  }
+
+  &::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(29%) sepia(80%) saturate(1478%) hue-rotate(188deg) brightness(93%) contrast(96%);
+    opacity: 0.8;
+    
+    &:hover {
+      opacity: 1;
+      transform: scale(1.05);
+      transition: all 0.2s ease;
+    }
+  }
+}

@@ -1,0 +1,65 @@
+<div class="p-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-white">Configuración</h3>
+    <button class="btn btn-primary px-4 fw-bold" (click)="guardar()">
+      <i class="bi bi-save me-2"></i> Guardar Cambios
+    </button>
+  </div>
+
+  <form [formGroup]="configForm">
+    <div class="row g-4">
+      
+      <!-- Bloque 1: DATOS PÚBLICOS -->
+      <div class="col-12 col-lg-6">
+        <div class="card p-4 h-100 shadow-sm" style="background-color: #1e293b; border: none;">
+          <h6 class="text-primary fw-bold mb-4">DATOS PÚBLICOS</h6>
+          
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">NOMBRE EMPRENDIMIENTO</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              formControlName="nombreEmprendimiento"
+              [ngClass]="{'is-invalid': configForm.get('nombreEmprendimiento')?.invalid && configForm.get('nombreEmprendimiento')?.touched}">
+            <div class="invalid-feedback">
+              El nombre del emprendimiento es obligatorio.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">WHATSAPP EMPRENDIMIENTO</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              formControlName="whatsapp"
+              [ngClass]="{'is-invalid': configForm.get('whatsapp')?.invalid && configForm.get('whatsapp')?.touched}">
+            <div class="invalid-feedback">
+              Ingresa un número válido de 9 dígitos que empiece con 9.
+            </div>
+            <small class="text-muted d-block mt-1" *ngIf="!configForm.get('whatsapp')?.touched || configForm.get('whatsapp')?.valid">
+              Solo números, debe empezar con 9.
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bloque 2: SEGURIDAD -->
+      <div class="col-12 col-lg-6">
+        <div class="card p-4 h-100 shadow-sm" style="background-color: #1e293b; border: none;">
+          <h6 class="text-primary fw-bold mb-4">SEGURIDAD</h6>
+          
+          <div class="mb-3">
+            <label class="form-label text-muted small fw-bold">NUEVA CONTRASEÑA</label>
+            <input 
+              type="password" 
+              class="form-control" 
+              formControlName="nuevaContrasena" 
+              placeholder="••••••••">
+            <small class="text-muted d-block mt-1">Déjalo en blanco si no deseas cambiar tu contraseña actual.</small>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </form>
+</div>

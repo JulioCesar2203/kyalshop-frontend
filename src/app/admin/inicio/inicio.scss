@@ -1,0 +1,34 @@
+.module-card {
+  background-color: #ffffff !important; /* Forzamos el fondo blanco */
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .icon-circle {
+    width: 80px;
+    height: 80px;
+    background-color: #f0f7ff; /* Azul muy clarito para el fondo del ícono */
+    color: #003366; /* Azul oscuro institucional para el ícono */
+    transition: all 0.3s ease;
+  }
+
+  .module-title {
+    color: #1e293b !important; /* Texto oscuro para que resalte sobre el blanco */
+    transition: color 0.3s ease;
+  }
+
+  /* Efecto mágico al pasar el mouse */
+  &:hover .icon-circle {
+    background-color: #003366;
+    color: #ffffff;
+  }
+  
+  &:hover .module-title {
+    color: #003366 !important;
+  }
+}

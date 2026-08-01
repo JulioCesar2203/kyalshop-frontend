@@ -1,0 +1,96 @@
+<div class="panel-container min-vh-100">
+  <div class="container-fluid py-4" style="max-width: 1300px;">
+    
+    <!-- TÍTULO DEL MÓDULO -->
+    <div class="header-module mb-4">
+      <h3 class="fw-bold m-0 text-primary text-capitalize">
+        <i class="bi bi-box-seam me-2"></i> Bandeja {{ tipoBandejaActual }}
+      </h3>
+    </div>
+
+    <!-- BARRA DE HERRAMIENTAS (TABS + ACCIONES) -->
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+      
+      <!-- TABS IZQUIERDA -->
+      <div class="custom-tabs d-flex gap-2">
+        <button 
+          class="tab-btn" 
+          [ngClass]="{'active': estadoSeleccionado === 'PENDIENTE'}"
+          (click)="cambiarTab('PENDIENTE')">
+          Pendientes
+        </button>
+        
+        <button 
+          class="tab-btn" 
+          [ngClass]="{'active': estadoSeleccionado === 'ENVIADO'}"
+          (click)="cambiarTab('ENVIADO')">
+          Enviados
+        </button>
+      </div>
+
+      <!-- BOTONERA DERECHA (Solo aparece si hay pedidos seleccionados) -->
+      <div *ngIf="pedidosSeleccionados.size > 0" class="fade-in">
+        <button class="btn btn-primary fw-bold shadow-sm d-flex align-items-center gap-2" (click)="generarEtiquetas()">
+          <i class="bi bi-printer"></i> 
+          Generar Etiqueta 
+          <span class="badge bg-white text-primary ms-1 rounded-pill">{{ pedidosSeleccionados.size }}</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- LISTADO DE PEDIDOS -->
+    <div class="pedidos-list">
+      
+      <!-- Estado Vacío -->
+      <div *ngIf="pedidosFiltrados.length === 0" class="empty-state shadow-sm">
+        <i class="bi bi-inbox"></i>
+        <p>No hay envíos registrados en este estado.</p>
+      </div>
+
+      <!-- Tarjetas de Envíos -->
+      @for (pedido of pedidosFiltrados; track pedido.id) {
+        <div class="pedido-card shadow-sm" [ngClass]="{'selected': pedidosSeleccionados.has(pedido.id)}">
+          
+          <!-- Checkbox de Selección -->
+          <div class="checkbox-col">
+            <input 
+              type="checkbox" 
+              class="custom-checkbox" 
+              [checked]="pedidosSeleccionados.has(pedido.id)"
+              (change)="toggleSeleccion(pedido.id)">
+          </div>
+
+          <!-- Información Central -->
+          <div class="info-col">
+            <h5 class="cliente-nombre">{{ pedido.clienteNombre }}</h5>
+            
+            <div class="cliente-detalles">
+              <span class="detalle-item"><i class="bi bi-person-vcard text-primary"></i> {{ pedido.clienteDni }}</span>
+              <span class="detalle-item"><i class="bi bi-telephone text-primary"></i> {{ pedido.clienteWhatsapp }}</span>
+              <span class="detalle-item"><i class="bi bi-calendar-event text-primary"></i> {{ pedido.fechaEnvio }}</span>
+            </div>
+
+            <div class="agencia-detalle">
+              <i class="bi bi-shop text-secondary me-2"></i>
+              <span *ngIf="pedido.metodoRecibo === 'shalom'">{{ pedido.agenciaShalom }}</span>
+              <span *ngIf="pedido.metodoRecibo === 'delivery'"><strong>Delivery:</strong> {{ pedido.distrito }} - {{ pedido.direccion }} | Ref: {{ pedido.referencia }}</span>
+            </div>
+          </div>
+
+          <!-- Acciones y Estado -->
+          <div class="action-col">
+            <span class="status-badge" [ngClass]="pedido.estado.toLowerCase()">
+              {{ pedido.estado }}
+            </span>
+            <a [href]="'https://wa.me/51' + pedido.clienteWhatsapp" target="_blank" class="action-btn whatsapp-btn" title="Contactar">
+              <i class="bi bi-whatsapp"></i>
+            </a>
+          </div>
+
+        </div>
+      }
+
+    </div>
+  </div>
+</div>

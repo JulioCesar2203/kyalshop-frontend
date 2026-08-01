@@ -1,0 +1,22 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h2>KYALSHOP</h2>
+      <p>Panel Administrativo</p>
+    </div>
+    
+    <form class="login-form">
+      <div class="form-group mb-3">
+        <label for="username">Usuario (WhatsApp)</label>
+        <input type="text" id="username" name="username" [(ngModel)]="username" class="form-control" placeholder="Ej: 934483984">
+      </div>
+      
+      <div class="form-group mb-4">
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" [(ngModel)]="password" class="form-control" placeholder="••••••••">
+      </div>
+      
+      <button type="button" class="btn btn-primary w-100 login-btn" (click)="login()">Ingresar</button>
+    </form>
+  </div>
+</div>

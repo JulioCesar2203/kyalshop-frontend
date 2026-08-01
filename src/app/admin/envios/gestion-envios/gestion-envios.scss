@@ -1,0 +1,181 @@
+.panel-container {
+  background-color: #f8fafc;
+}
+
+.header-module {
+  h3 {
+    color: #0f172a;
+    font-size: 1.5rem;
+  }
+}
+
+/* Estilos de las Pestañas */
+.custom-tabs {
+  display: flex;
+  gap: 12px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 12px;
+
+  .tab-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 24px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #64748b;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #f1f5f9;
+      color: #334155;
+    }
+
+    &.active {
+      background: #2a71b9;
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(42, 113, 185, 0.2);
+    }
+  }
+}
+
+/* Tarjeta del Pedido */
+.pedido-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    border-color: #cbd5e1;
+  }
+
+  &.selected {
+    background-color: #f0f7ff;
+    border-left-color: #2a71b9;
+    border-top-color: #bfdbfe;
+    border-right-color: #bfdbfe;
+    border-bottom-color: #bfdbfe;
+  }
+}
+
+/* Columna de Checkbox */
+.checkbox-col {
+  .custom-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #2a71b9;
+  }
+}
+
+/* Columna de Información Central */
+.info-col {
+  flex: 1;
+
+  .cliente-nombre {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 8px;
+  }
+
+  .cliente-detalles {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 12px;
+
+    .detalle-item {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+
+  .agencia-detalle {
+    font-size: 0.85rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #f1f5f9;
+  }
+}
+
+/* Columna de Acciones */
+.action-col {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .status-badge {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+
+    &.pendiente {
+      background-color: #fef3c7;
+      color: #d97706;
+      border: 1px solid #fde68a;
+    }
+
+    &.enviado {
+      background-color: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    transition: all 0.2s ease;
+    text-decoration: none;
+
+    &.whatsapp-btn:hover {
+      background-color: #dcfce7;
+      color: #16a34a;
+      border-color: #16a34a;
+    }
+  }
+}
+
+/* Estado Vacío */
+.empty-state {
+  background: white;
+  border-radius: 12px;
+  padding: 60px 20px;
+  text-align: center;
+  border: 1px dashed #cbd5e1;
+
+  i {
+    font-size: 3rem;
+    color: #cbd5e1;
+  }
+
+  p {
+    margin-top: 16px;
+    color: #64748b;
+    font-weight: 500;
+  }
+}

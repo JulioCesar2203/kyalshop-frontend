@@ -1,0 +1,82 @@
+<div class="layout-wrapper d-flex flex-column min-vh-100 bg-light">
+  
+  <!-- ==========================================
+       TOP HEADER PERMANENTE (Global)
+       ========================================== -->
+  <header class="bg-white border-bottom shadow-sm d-flex justify-content-between align-items-center px-4 py-3 z-3 position-sticky top-0">
+    
+    <!-- Lado Izquierdo: Logo y Título (Clickeable) -->
+    <div class="d-flex align-items-center gap-3" style="cursor: pointer;" routerLink="/admin/inicio">
+      <i class="bi bi-box-seam text-primary fs-1"></i>
+      <div class="d-flex flex-column">
+        <span class="fw-bold text-dark fs-5" style="line-height: 1.2;">KYALSHOP</span>
+        <span class="text-muted" style="font-size: 0.75rem; letter-spacing: 0.5px;">SISTEMA ADMINISTRATIVO</span>
+      </div>
+    </div>
+
+    <!-- Lado Derecho: Botón Menú, Usuario y Cerrar Sesión -->
+    <div class="d-flex align-items-center gap-3">
+      
+      <!-- NUEVO BOTÓN: VOLVER AL INICIO (Solo visible dentro de los módulos) -->
+      <button *ngIf="!esPantallaInicio" 
+              class="btn btn-light border shadow-sm fw-bold d-flex align-items-center me-2 px-3 py-2" 
+              routerLink="/admin/inicio"
+              style="transition: all 0.2s ease;">
+        <i class="bi bi-grid-fill text-primary me-2"></i> 
+        <span class="d-none d-md-inline text-secondary">Menú Principal</span>
+      </button>
+
+      <!-- Divisor Vertical (Solo diseño) -->
+      <div *ngIf="!esPantallaInicio" class="vr d-none d-md-flex mx-2" style="height: 35px; align-self: center; opacity: 0.15;"></div>
+
+      <!-- Datos del Usuario -->
+      <div class="text-end d-none d-md-block ms-1">
+        <div class="fw-bold text-dark text-uppercase" style="font-size: 0.85rem;">Julio César</div>
+        <a href="javascript:void(0)" class="text-danger small text-decoration-none fw-bold" (click)="cerrarSesion()">Cerrar Sesión</a>
+      </div>
+      <div class="bg-light rounded-circle d-flex justify-content-center align-items-center border" style="width: 45px; height: 45px;">
+        <i class="bi bi-person-fill text-secondary fs-4"></i>
+      </div>
+      
+    </div>
+  </header>
+
+  <!-- ==========================================
+       CONTENEDOR INFERIOR (Sidebar + Main Content)
+       ========================================== -->
+  <div class="d-flex flex-grow-1">
+
+    <!-- BARRA LATERAL (Solo visible dentro de los módulos y si existe un submenú) -->
+    <aside *ngIf="!esPantallaInicio && submenuActual" class="sidebar bg-dark text-white p-3 d-flex flex-column shadow-sm" style="width: 250px;">
+      
+      <!-- Título Dinámico del Módulo -->
+      <div class="text-center mb-3 mt-2">
+        <span class="badge bg-primary w-100 py-2 fs-6 text-uppercase">{{ submenuActual.titulo }}</span>
+      </div>
+
+      <!-- Navegación Dinámica -->
+      <nav class="nav flex-column gap-2 mt-3">
+        @for (item of submenuActual.opciones; track item.url) {
+          <a [routerLink]="item.url" routerLinkActive="active-link" class="nav-link text-white d-flex align-items-center gap-3 p-2 rounded custom-link">
+            <i [class]="item.icono"></i>
+            <span>{{ item.titulo }}</span>
+          </a>
+        }
+      </nav>
+      
+    </aside>
+
+    <!-- ÁREA DE CONTENIDO CENTRAL -->
+    <!-- Al usar flex-grow-1, toma automáticamente todo el espacio que sobra a la derecha -->
+    <main class="main-content flex-grow-1" style="background-color: #f8fafc;">
+      
+      <!-- El espaciado cambia dependiendo si estamos en el inicio (p-0) o en un módulo (p-4) -->
+      <div [ngClass]="esPantallaInicio ? 'p-0' : 'p-4'">
+        <router-outlet></router-outlet>
+      </div>
+
+    </main>
+
+  </div>
+
+</div>
