@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environment/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import { Observable } from 'rxjs';
 export class PedidoService {
   
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8095/api/pedidos';
+  private apiUrl = environment.apiUrl + '/api/pedidos';
 
   crearPedido(pedido: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/crear`, pedido);

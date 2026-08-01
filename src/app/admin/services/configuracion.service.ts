@@ -3,13 +3,14 @@ import { inject, Injectable } from '@angular/core';
 import { ConfiguracionRequest } from '../interfaces/configuracion.interface';
 import { Observable } from 'rxjs';
 import { GenericResponse } from '../../core/interfaces/api.interface';
+import { environment } from '../../environment/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ConfiguracionService {
   private http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8095/api/configuracion';
+  private readonly apiUrl = environment.apiUrl + '/api/configuracion';
 
   actualizarConfiguracion(datos: ConfiguracionRequest): Observable<GenericResponse<void>> {
     return this.http.put<GenericResponse<void>>(this.apiUrl, datos);
