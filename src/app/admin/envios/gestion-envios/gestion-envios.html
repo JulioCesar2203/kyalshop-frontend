@@ -66,7 +66,7 @@
             <h5 class="cliente-nombre">{{ pedido.clienteNombre }}</h5>
             
             <div class="cliente-detalles">
-              <span class="detalle-item"><i class="bi bi-person-vcard text-primary"></i> {{ pedido.clienteDni }}</span>
+              <span class="detalle-item" *ngIf="pedido.clienteDni"><i class="bi bi-person-vcard text-primary"></i> {{ pedido.clienteDni }}</span>
               <span class="detalle-item"><i class="bi bi-telephone text-primary"></i> {{ pedido.clienteWhatsapp }}</span>
               <span class="detalle-item"><i class="bi bi-calendar-event text-primary"></i> {{ pedido.fechaEnvio }}</span>
             </div>
@@ -93,4 +93,46 @@
 
     </div>
   </div>
+</div>
+
+<!-- ==========================================
+     CONTENEDOR EXCLUSIVO PARA IMPRESIÓN 
+     ========================================== -->
+<div id="print-section" class="print-only">
+  @for (pedido of pedidosParaImprimir; track pedido.id) {
+    <div class="etiqueta-box">
+      
+      <!-- Cabecera -->
+      <div class="etiqueta-header">
+        <span class="text-muted">REMITENTE</span>
+        <h4 class="fw-bold mb-0">KYALSHOP</h4>
+      </div>
+
+      <!-- Cuerpo / Destinatario -->
+      <div class="etiqueta-body">
+        <span class="text-muted">DESTINATARIO:</span>
+        <h2 class="fw-bold text-uppercase mt-1 mb-1">{{ pedido.clienteNombre }}</h2>
+        <p class="mb-0 fs-5">Cel: {{ pedido.clienteWhatsapp }}</p>
+        <p class="mb-0 fs-5" *ngIf="pedido.clienteDni">DNI: {{ pedido.clienteDni }}</p>
+      </div>
+
+      <!-- Pie / Destino -->
+      <div class="etiqueta-footer">
+        <span class="text-muted">DESTINO:</span>
+        <p class="fs-5 mb-2">
+          <strong *ngIf="pedido.metodoRecibo === 'shalom'">Agencia Shalom:</strong>
+          <strong *ngIf="pedido.metodoRecibo === 'delivery'">Delivery:</strong>
+          {{ pedido.metodoRecibo === 'shalom' ? pedido.agenciaShalom : pedido.distrito + ' - ' + pedido.direccion }}
+        </p>
+        
+        <div class="footer-bottom">
+          <h4 class="fw-bold bg-light px-2 py-1 rounded d-inline-block text-uppercase">
+            {{ pedido.metodoRecibo === 'shalom' ? 'SHALOM' : 'DELIVERY' }}
+          </h4>
+          <span class="fw-bold fs-5">{{ pedido.fechaEnvio }}</span>
+        </div>
+      </div>
+      
+    </div>
+  }
 </div>

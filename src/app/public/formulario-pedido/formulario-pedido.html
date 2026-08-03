@@ -62,7 +62,6 @@
 
       <!-- 3. BLOQUE SHALOM -->
       <div *ngIf="tipoSeleccionado === 'shalom'">
-        
         <div class="mb-3 position-relative">
           <label class="form-label fw-bold small" [ngClass]="{'text-danger': pedidoForm.get('agenciaShalom')?.invalid && pedidoForm.get('agenciaShalom')?.touched}">
             Busca tu Agencia *
@@ -86,40 +85,11 @@
           
           <div class="custom-dropdown shadow border rounded" *ngIf="mostrarDropdown && agenciasFiltradas.length > 0">
             @for (agencia of agenciasFiltradas; track agencia.Agencia) {
-              <div class="dropdown-item p-2 border-bottom" (click)="seleccionarAgencia(agencia)">
+              <div class="dropdown-item p-2 border-bottom" (mousedown)="seleccionarAgencia(agencia)" style="cursor: pointer;">
                 <div class="fw-bold text-dark" style="font-size: 0.9rem;">{{agencia.Agencia}}</div>
                 <div class="text-muted" style="font-size: 0.75rem; white-space: normal;">{{agencia.Direccion}}</div>
               </div>
             }
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label fw-bold small" [ngClass]="{'text-danger': pedidoForm.get('dni')?.invalid && pedidoForm.get('dni')?.touched}">
-            Documento para Recoger *
-          </label>
-          <div class="input-group">
-            <select class="form-select bg-light border-end-0" style="max-width: 90px;" formControlName="tipoDocumento">
-              <option value="DNI">DNI</option>
-              <option value="CE">CE</option>
-            </select>
-            <input 
-              type="text" 
-              class="form-control" 
-              formControlName="dni" 
-              [placeholder]="pedidoForm.get('tipoDocumento')?.value === 'DNI' ? '8 dígitos exactos' : 'Alfanumérico'"
-              [attr.maxlength]="pedidoForm.get('tipoDocumento')?.value === 'DNI' ? 8 : 20"
-              (keypress)="inputDocumento($event)"
-              [ngClass]="{'is-invalid': pedidoForm.get('dni')?.invalid && pedidoForm.get('dni')?.touched}">
-          </div>
-
-          <div *ngIf="pedidoForm.get('dni')?.invalid && pedidoForm.get('dni')?.touched" class="text-danger small mt-1 fw-bold">
-            <span *ngIf="pedidoForm.get('dni')?.hasError('required')">
-              <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
-            </span>
-            <span *ngIf="pedidoForm.get('dni')?.hasError('pattern') && !pedidoForm.get('dni')?.hasError('required')">
-              <i class="bi bi-exclamation-circle"></i> Formato de {{ pedidoForm.get('tipoDocumento')?.value }} inválido.
-            </span>
           </div>
         </div>
       </div>
@@ -166,6 +136,36 @@
 
       <!-- 5. CAMPOS COMPARTIDOS FINALES -->
       <div *ngIf="tipoSeleccionado">
+        
+        <!-- EL DNI AHORA VIVE AQUÍ, ES COMPARTIDO PARA AMBOS MÉTODOS -->
+        <div class="mb-3">
+          <label class="form-label fw-bold small" [ngClass]="{'text-danger': pedidoForm.get('dni')?.invalid && pedidoForm.get('dni')?.touched}">
+            Documento de Identidad *
+          </label>
+          <div class="input-group">
+            <select class="form-select bg-light border-end-0" style="max-width: 90px;" formControlName="tipoDocumento">
+              <option value="DNI">DNI</option>
+              <option value="CE">CE</option>
+            </select>
+            <input 
+              type="text" 
+              class="form-control" 
+              formControlName="dni" 
+              [placeholder]="pedidoForm.get('tipoDocumento')?.value === 'DNI' ? '8 dígitos exactos' : 'Alfanumérico'"
+              [attr.maxlength]="pedidoForm.get('tipoDocumento')?.value === 'DNI' ? 8 : 20"
+              (keypress)="inputDocumento($event)"
+              [ngClass]="{'is-invalid': pedidoForm.get('dni')?.invalid && pedidoForm.get('dni')?.touched}">
+          </div>
+
+          <div *ngIf="pedidoForm.get('dni')?.invalid && pedidoForm.get('dni')?.touched" class="text-danger small mt-1 fw-bold">
+            <span *ngIf="pedidoForm.get('dni')?.hasError('required')">
+              <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
+            </span>
+            <span *ngIf="pedidoForm.get('dni')?.hasError('pattern') && !pedidoForm.get('dni')?.hasError('required')">
+              <i class="bi bi-exclamation-circle"></i> Formato de {{ pedidoForm.get('tipoDocumento')?.value }} inválido.
+            </span>
+          </div>
+        </div>
         
         <div class="mb-3">
           <label class="form-label fw-bold small" [ngClass]="{'text-danger': pedidoForm.get('nombreCompleto')?.invalid && pedidoForm.get('nombreCompleto')?.touched}">

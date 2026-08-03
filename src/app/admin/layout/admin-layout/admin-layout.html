@@ -3,7 +3,7 @@
   <!-- ==========================================
        TOP HEADER PERMANENTE (Global)
        ========================================== -->
-  <header class="bg-white border-bottom shadow-sm d-flex justify-content-between align-items-center px-4 py-3 z-3 position-sticky top-0">
+  <header class="bg-white border-bottom shadow-sm d-flex justify-content-between align-items-center px-4 py-3 z-3 position-sticky top-0 d-print-none">
     
     <!-- Lado Izquierdo: Logo y Título (Clickeable) -->
     <div class="d-flex align-items-center gap-3" style="cursor: pointer;" routerLink="/admin/inicio">
@@ -47,7 +47,7 @@
   <div class="d-flex flex-grow-1">
 
     <!-- BARRA LATERAL (Solo visible dentro de los módulos y si existe un submenú) -->
-    <aside *ngIf="!esPantallaInicio && submenuActual" class="sidebar bg-dark text-white p-3 d-flex flex-column shadow-sm" style="width: 250px;">
+    <aside *ngIf="!esPantallaInicio && submenuActual" class="sidebar bg-dark text-white p-3 d-flex flex-column shadow-sm d-print-none" style="width: 250px;">
       
       <!-- Título Dinámico del Módulo -->
       <div class="text-center mb-3 mt-2">

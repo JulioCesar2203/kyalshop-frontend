@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { PedidoService } from '../../services/pedido.service';
 import { ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -13,11 +13,13 @@ import Swal from 'sweetalert2';
 export class GestionEnviosComponent {
   private pedidoService = inject(PedidoService);
   private route = inject(ActivatedRoute);
+  private cdr = inject(ChangeDetectorRef);
 
   listadoPedidos: any[] = [];
   estadoSeleccionado: string = 'PENDIENTE';
   pedidosSeleccionados: Set<number> = new Set<number>();
-  tipoBandejaActual: string = 'shalom'; 
+  tipoBandejaActual: string = 'shalom';
+  pedidosParaImprimir: any[] = [];
 
   ngOnInit() {
     this.cargarPedidos();
@@ -116,7 +118,10 @@ export class GestionEnviosComponent {
   }
 
   ejecutarImpresionReal(ids: number[]) {
-    const pedidosAImprimir = this.listadoPedidos.filter(p => ids.includes(p.id));
-    window.print();
+    this.pedidosParaImprimir = this.listadoPedidos.filter(p => ids.includes(p.id));
+    this.cdr.detectChanges();
+    setTimeout(() => {
+      window.print();
+    }, 500);
   }
 }

@@ -79,7 +79,6 @@ export class FormularioPedidoComponent implements OnInit {
     });
   }
 
-  // --- LÓGICA DE VALIDACIONES DINÁMICAS ---
   actualizarValidacionesDinamicas(tipoEnvio: string) {
     const agencia = this.pedidoForm.get('agenciaShalom');
     const distrito = this.pedidoForm.get('distrito');
@@ -87,20 +86,17 @@ export class FormularioPedidoComponent implements OnInit {
 
     if (tipoEnvio === 'shalom') {
       agencia?.setValidators([Validators.required]);
-      this.actualizarValidacionDocumento();
-
       distrito?.clearValidators();
       direccion?.clearValidators();
     } else if (tipoEnvio === 'delivery') {
       distrito?.setValidators([Validators.required]);
       direccion?.setValidators([Validators.required]);
-
       agencia?.clearValidators();
-      this.pedidoForm.get('dni')?.clearValidators();
     }
 
+    this.actualizarValidacionDocumento();
+
     agencia?.updateValueAndValidity();
-    this.pedidoForm.get('dni')?.updateValueAndValidity();
     distrito?.updateValueAndValidity();
     direccion?.updateValueAndValidity();
   }
@@ -109,20 +105,18 @@ export class FormularioPedidoComponent implements OnInit {
     const tipoDoc = this.pedidoForm.get('tipoDocumento')?.value;
     const dni = this.pedidoForm.get('dni');
 
-    if (this.pedidoForm.get('tipoEnvio')?.value === 'shalom') {
-      if (tipoDoc === 'DNI') {
-        dni?.setValidators([
-          Validators.required,
-          Validators.pattern('^[0-9]{8}$'),
-        ]);
-      } else {
-        dni?.setValidators([
-          Validators.required,
-          Validators.pattern('^[a-zA-Z0-9]{9,20}$'),
-        ]);
-      }
-      dni?.updateValueAndValidity();
+    if (tipoDoc === 'DNI') {
+      dni?.setValidators([
+        Validators.required,
+        Validators.pattern('^[0-9]{8}$'),
+      ]);
+    } else {
+      dni?.setValidators([
+        Validators.required,
+        Validators.pattern('^[a-zA-Z0-9]{9,20}$'),
+      ]);
     }
+    dni?.updateValueAndValidity();
   }
 
   // --- BLOQUEOS FÍSICOS DE TECLADO ---
@@ -227,14 +221,26 @@ export class FormularioPedidoComponent implements OnInit {
   agendar() {
     if (this.pedidoForm.invalid) {
       this.pedidoForm.markAllAsTouched();
-      
-      Swal.fire({
-        icon: 'warning',
-        title: 'Formulario incompleto',
-        text: 'Por favor, complete todos los campos obligatorios correctamente.',
-        confirmButtonColor: '#0d6efd',
-        confirmButtonText: 'Entendido'
-      });
+
+      const errorFecha = this.pedidoForm.get('fechaEnvio')?.hasError('diaInvalido');
+
+      if (errorFecha) {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Fecha no permitida',
+          text: 'Recuerda que solo realizamos despachos los días Lunes y Martes. Por favor, selecciona una fecha válida.',
+          confirmButtonColor: '#0d6efd',
+          confirmButtonText: 'Entendido'
+        });
+      } else {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Formulario incompleto',
+          text: 'Por favor, complete todos los campos obligatorios correctamente.',
+          confirmButtonColor: '#0d6efd',
+          confirmButtonText: 'Entendido'
+        });
+      }
       
       return;
     }
