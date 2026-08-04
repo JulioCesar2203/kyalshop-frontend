@@ -14,8 +14,7 @@
       <p class="text-muted small mb-3 fw-medium">Sistema Integrado de Gestión Logística</p>
     </div>
 
-    <!-- Formulario interactivo -->
-    <form>
+    <form (ngSubmit)="login()">
       <div class="mb-4">
         <label class="form-label fw-semibold text-secondary small">Usuario: <span class="text-danger">*</span></label>
         <div class="custom-input-group border rounded-2 d-flex align-items-center px-3 py-1">
@@ -33,7 +32,7 @@
         </div>
       </div>
 
-      <button type="button" class="btn w-100 fw-bold py-2 text-white shadow-sm" style="background-color: #d32f2f; border-color: #d32f2f;" (click)="login()">
+      <button type="submit" class="btn w-100 fw-bold py-2 text-white shadow-sm" style="background-color: #d32f2f; border-color: #d32f2f;">
         INGRESAR
       </button>
     </form>

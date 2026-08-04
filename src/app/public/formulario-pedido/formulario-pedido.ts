@@ -57,10 +57,10 @@ export class FormularioPedidoComponent implements OnInit {
       this.numeroWhatsAppDestino = '941843823';
 
       this.titleService.setTitle('KyalCourier');
-      this.cambiarFavicon('/favicon_courier.ico');
+      this.cambiarFavicon('/favicon_courier.ico'); 
     } else {
       this.marcaActual = 'KYALSHOP';
-      this.numeroWhatsAppDestino = '934483984';
+      this.numeroWhatsAppDestino = '995210831';
 
       this.titleService.setTitle('KyalShop');
       this.cambiarFavicon('/favicon.ico');
