@@ -20,7 +20,7 @@ export const routes: Routes = [
     canActivate: [notAuthGuard]
   },
   {
-    path: 'form/:telefono',
+    path: 'form/:marca',
     component: FormularioPedidoComponent
   },
   {
@@ -43,6 +43,7 @@ export const routes: Routes = [
         children: [
           { path: '', redirectTo: 'shalom', pathMatch: 'full' },
           { path: 'shalom', component: GestionEnviosComponent },
+          { path: 'olva', component: GestionEnviosComponent },
           { path: 'delivery', component: GestionEnviosComponent }
         ]
       },

@@ -1,71 +1,65 @@
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #0f172a; // Fondo oscuro elegante
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* Contenedor principal centrado con fondo elegante */
+.login-wrapper {
+  background: linear-gradient(135deg, #0b3d60 0%, #17527c 100%);
+  
+  /* Círculos decorativos de fondo */
+  .bg-shape {
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 500px;
+    height: 500px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 50%;
+    z-index: 1;
+
+    &.shape-2 {
+      top: auto;
+      bottom: -15%;
+      left: auto;
+      right: -5%;
+      width: 400px;
+      height: 400px;
+    }
+  }
 }
 
+/* Estilos de la tarjeta Blanca Flotante */
 .login-card {
-  background-color: #1e293b;
-  padding: 3rem;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-  width: 100%;
-  max-width: 400px;
-  border: 1px solid #334155;
+  box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.25) !important;
 }
 
-.login-header {
-  text-align: center;
-  margin-bottom: 2rem;
-
-  h2 {
-    color: #f8fafc;
-    font-weight: 700;
-    letter-spacing: 2px;
-    margin-bottom: 0.5rem;
-  }
-
-  p {
-    color: #94a3b8;
-    font-size: 0.9rem;
-  }
-}
-
-.login-form {
-  label {
-    color: #cbd5e1;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
+/* Inputs personalizados para que queden limpios y modernos */
+.custom-input-group {
+  background-color: #f8f9fa; /* Fondo ligeramente gris para los inputs */
+  transition: all 0.2s ease;
+  
+  &:focus-within {
+    border-color: #0b3d60 !important;
+    background-color: #fff;
+    box-shadow: 0 0 0 0.2rem rgba(11, 61, 96, 0.15);
   }
 
   .form-control {
-    background-color: #0f172a;
-    border: 1px solid #334155;
-    color: #f8fafc;
-    padding: 0.75rem 1rem;
+    background-color: transparent;
+    padding: 0.7rem 0.5rem;
     
-    &:focus {
-      background-color: #0f172a;
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.25);
-      color: #f8fafc;
+    &::placeholder {
+      color: #adb5bd;
+      font-size: 0.9rem;
     }
   }
 
-  .login-btn {
-    background-color: #3b82f6;
-    border: none;
-    padding: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    transition: background-color 0.3s;
+  i {
+    font-size: 1.1rem;
+  }
 
+  /* Interacción del ojito de la contraseña */
+  .btn-eye {
+    cursor: pointer;
+    transition: color 0.2s;
     &:hover {
-      background-color: #2563eb;
+      color: #0b3d60 !important;
     }
   }
 }

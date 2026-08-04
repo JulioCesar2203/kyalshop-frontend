@@ -4,49 +4,38 @@
   height: 100%;
 }
 
+/* Tarjeta Limpia */
 .share-card {
-  background-color: #1e293b;
-  border: none;
-  border-radius: 16px;
-  max-width: 450px;
+  max-width: 480px; /* Un poco más ancha para que el link respire */
   width: 100%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06) !important; /* Sombra premium muy suave */
 }
 
-.icon-container {
-  width: 60px;
-  height: 60px;
-  background-color: rgba(25, 135, 84, 0.15); /* Fondo verde translúcido */
-  border-radius: 50%;
+/* Quitamos el borde azul feo cuando haces clic en el input */
+.form-control:focus {
+  box-shadow: none;
+  border-color: #dee2e6;
 }
 
-.custom-link-input {
-  background-color: #0f172a;
-  border: 1px solid #334155;
-  color: #3b82f6; /* Color azul para el link */
-  font-family: monospace;
-  font-size: 0.9rem;
-  
-  &:focus {
-    background-color: #0f172a;
-    color: #3b82f6;
-    border-color: #3b82f6;
-    box-shadow: none;
-  }
-}
-
-.custom-wa-btn {
-  background-color: #0f766e; /* Un tono verde más oscuro/elegante */
+/* Botón de WhatsApp con el color oficial */
+.btn-whatsapp {
+  background-color: #25d366;
   border: none;
+  transition: all 0.2s ease;
   
   &:hover {
-    background-color: #115e59;
+    background-color: #128c7e; /* Verde más oscuro al pasar el ratón */
+    transform: translateY(-2px);
   }
 }
 
-.custom-blank-btn {
-  background-color: rgba(255, 255, 255, 0.05);
+/* Botón secundario (Probar enlace) */
+.btn-secundario {
+  transition: all 0.2s ease;
   
   &:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: #f8f9fa;
+    color: #0b3d60 !important;
+    border-color: #cbd5e1 !important;
   }
 }

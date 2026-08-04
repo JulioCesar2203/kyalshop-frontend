@@ -20,6 +20,7 @@ export class GestionEnviosComponent {
   pedidosSeleccionados: Set<number> = new Set<number>();
   tipoBandejaActual: string = 'shalom';
   pedidosParaImprimir: any[] = [];
+  marcaSeleccionada: string = 'TODOS';
 
   ngOnInit() {
     this.cargarPedidos();
@@ -45,10 +46,18 @@ export class GestionEnviosComponent {
   }
 
   get pedidosFiltrados() {
-    return this.listadoPedidos.filter(p => 
-      p.estado === this.estadoSeleccionado && 
-      p.metodoRecibo === this.tipoBandejaActual
-    );
+    return this.listadoPedidos.filter(p => {
+      const coincideEstado = p.estado === this.estadoSeleccionado;
+      const coincideBandeja = p.metodoRecibo === this.tipoBandejaActual;
+      const coincideMarca = this.marcaSeleccionada === 'TODOS' || (p.marca || 'KYALSHOP') === this.marcaSeleccionada;
+      
+      return coincideEstado && coincideBandeja && coincideMarca;
+    });
+  }
+
+  cambiarMarca(marca: string) {
+    this.marcaSeleccionada = marca;
+    this.pedidosSeleccionados.clear();
   }
 
   cambiarTab(estado: string) {
@@ -82,6 +91,8 @@ export class GestionEnviosComponent {
         if (res.success) {
           this.cargarPedidos();
           this.pedidosSeleccionados.clear();
+
+          this.estadoSeleccionado = 'ENVIADO';
 
           Swal.fire({
             title: '¡Estados actualizados!',

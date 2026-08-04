@@ -9,35 +9,24 @@ import Swal from 'sweetalert2';
   styleUrl: './compartir.scss',
 })
 export class CompartirComponent {
-  public linkCompartir: string = '';
-  
-  private numeroWhatsApp: string = '934483984'; 
+  public linkShop: string = '';
+  public linkCourier: string = '';
 
   ngOnInit() {
     const dominio = window.location.origin;
-    this.linkCompartir = `${dominio}/form/${this.numeroWhatsApp}`;
+    this.linkShop = `${dominio}/form/shop`; 
+    this.linkCourier = `${dominio}/form/courier`; 
   }
 
-  copiarLink() {
-    navigator.clipboard.writeText(this.linkCompartir).then(() => {
+  copiarLink(link: string) {
+    navigator.clipboard.writeText(link).then(() => {
       Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: '¡Enlace copiado!',
-        showConfirmButton: false,
-        timer: 2000
+        toast: true, position: 'top-end', icon: 'success', title: '¡Enlace copiado!', showConfirmButton: false, timer: 2000
       });
     });
   }
 
-  enviarWhatsApp() {
-    const mensaje = `¡Hola! Aquí tienes el enlace de KYALSHOP para registrar tu envío de forma rápida: ${this.linkCompartir}`;
-    const url = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
-    window.open(url, '_blank');
-  }
-
-  abrirNuevaPestana() {
-    window.open(this.linkCompartir, '_blank');
+  abrirNuevaPestana(link: string) {
+    window.open(link, '_blank');
   }
 }

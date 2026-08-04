@@ -1,22 +1,49 @@
-<div class="login-container">
-  <div class="login-card">
-    <div class="login-header">
-      <h2>KYALSHOP</h2>
-      <p>Panel Administrativo</p>
-    </div>
+<div class="login-wrapper vh-100 d-flex align-items-center justify-content-center position-relative overflow-hidden">
+  
+  <!-- Decoración sutil de fondo para darle un toque moderno -->
+  <div class="bg-shape"></div>
+  <div class="bg-shape shape-2"></div>
+
+  <!-- Tarjeta Blanca Flotante (CENTRADA) -->
+  <div class="login-card shadow-lg bg-white rounded-4 p-5 position-relative z-2" style="max-width: 450px; width: 100%; margin: 0 15px;">
     
-    <form class="login-form">
-      <div class="form-group mb-3">
-        <label for="username">Usuario (WhatsApp)</label>
-        <input type="text" id="username" name="username" [(ngModel)]="username" class="form-control" placeholder="Ej: 934483984">
+    <!-- Cabecera / Logo -->
+    <div class="text-center mb-4 pb-2 border-bottom">
+      <img src="/assets/images/logo_kyalshop.png" alt="KyalShop" class="img-fluid mb-2" style="max-height: 90px;">
+      <h5 class="fw-bold text-dark mb-1" style="color: #0b3d60 !important;">KYALSHOP</h5>
+      <p class="text-muted small mb-3 fw-medium">Sistema Integrado de Gestión Logística</p>
+    </div>
+
+    <!-- Formulario interactivo -->
+    <form>
+      <div class="mb-4">
+        <label class="form-label fw-semibold text-secondary small">Usuario: <span class="text-danger">*</span></label>
+        <div class="custom-input-group border rounded-2 d-flex align-items-center px-3 py-1">
+          <i class="bi bi-person text-muted"></i>
+          <input type="text" name="username" [(ngModel)]="username" class="form-control border-0 shadow-none" placeholder="Ingresar usuario (WhatsApp)">
+        </div>
       </div>
-      
-      <div class="form-group mb-4">
-        <label for="password">Contraseña</label>
-        <input type="password" id="password" name="password" [(ngModel)]="password" class="form-control" placeholder="••••••••">
+
+      <div class="mb-4">
+        <label class="form-label fw-semibold text-secondary small">Contraseña: <span class="text-danger">*</span></label>
+        <div class="custom-input-group border rounded-2 d-flex align-items-center px-3 py-1">
+          <i class="bi bi-lock text-muted"></i>
+          <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="password" class="form-control border-0 shadow-none" placeholder="Ingresar la contraseña">
+          <i class="bi" [class.bi-eye-fill]="!showPassword" [class.bi-eye-slash-fill]="showPassword" class="text-muted cursor-pointer btn-eye" (click)="togglePassword()"></i>
+        </div>
       </div>
-      
-      <button type="button" class="btn btn-primary w-100 login-btn" (click)="login()">Ingresar</button>
+
+      <button type="button" class="btn w-100 fw-bold py-2 text-white shadow-sm" style="background-color: #d32f2f; border-color: #d32f2f;" (click)="login()">
+        INGRESAR
+      </button>
     </form>
   </div>
+
+  <!-- Footer Informativo (Fijado abajo y en color claro) -->
+  <div class="text-center position-absolute bottom-0 mb-4 z-2">
+    <p class="small text-white-50 mb-1">Navegador recomendado</p>
+    <i class="bi bi-browser-chrome fs-4 text-white"></i>
+    <p class="small text-white-50 mt-2" style="font-size: 0.75rem;">KYALSHOP v.1.0.0</p>
+  </div>
+
 </div>

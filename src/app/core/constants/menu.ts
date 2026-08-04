@@ -38,6 +38,7 @@ export const SUBMENUS_KYALSHOP: any = {
     titulo: 'GESTIÓN DE ENVÍOS',
     opciones: [
       { titulo: 'Bandeja Shalom', icono: 'bi bi-shop', url: '/admin/envios/shalom' },
+      { titulo: 'Bandeja Olva', icono: 'bi bi-box-seam', url: '/admin/envios/olva' }, // <-- ¡AQUÍ AGREGAMOS OLVA!
       { titulo: 'Bandeja Delivery', icono: 'bi bi-truck', url: '/admin/envios/delivery' }
     ]
   },

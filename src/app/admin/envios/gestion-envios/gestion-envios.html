@@ -11,8 +11,8 @@
     <!-- BARRA DE HERRAMIENTAS (TABS + ACCIONES) -->
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
       
-      <!-- TABS IZQUIERDA -->
-      <div class="custom-tabs d-flex gap-2">
+      <!-- TABS IZQUIERDA Y SELECTOR DE MARCA -->
+      <div class="custom-tabs d-flex gap-2 align-items-center">
         <button 
           class="tab-btn" 
           [ngClass]="{'active': estadoSeleccionado === 'PENDIENTE'}"
@@ -26,6 +26,15 @@
           (click)="cambiarTab('ENVIADO')">
           Enviados
         </button>
+
+        <!-- SELECTOR DE MARCAS -->
+        <div class="ms-3 border-start ps-3">
+          <select class="form-select border-0 shadow-sm fw-bold text-primary" (change)="cambiarMarca($any($event.target).value)">
+            <option value="TODOS">📦 Todas las Marcas</option>
+            <option value="KYALSHOP">🛍️ KyalShop</option>
+            <option value="KYALCOURIER">✈️ KyalCourier</option>
+          </select>
+        </div>
       </div>
 
       <!-- BOTONERA DERECHA (Solo aparece si hay pedidos seleccionados) -->
@@ -45,7 +54,7 @@
       <!-- Estado Vacío -->
       <div *ngIf="pedidosFiltrados.length === 0" class="empty-state shadow-sm">
         <i class="bi bi-inbox"></i>
-        <p>No hay envíos registrados en este estado.</p>
+        <p>No hay envíos registrados en este estado o marca.</p>
       </div>
 
       <!-- Tarjetas de Envíos -->
@@ -63,17 +72,38 @@
 
           <!-- Información Central -->
           <div class="info-col">
-            <h5 class="cliente-nombre">{{ pedido.clienteNombre }}</h5>
+            <!-- Etiqueta visual pequeña para saber de qué marca es el pedido -->
+            <span class="badge bg-light text-secondary border mb-1 d-inline-block" style="font-size: 0.7rem;">
+              {{ pedido.marca || 'KYALSHOP' }}
+            </span>
+            
+            <!-- Nombre del cliente -->
+            <h5 class="cliente-nombre m-0 mb-2 mt-1">{{ pedido.clienteNombre }}</h5>
             
             <div class="cliente-detalles">
-              <span class="detalle-item" *ngIf="pedido.clienteDni"><i class="bi bi-person-vcard text-primary"></i> {{ pedido.clienteDni }}</span>
-              <span class="detalle-item"><i class="bi bi-telephone text-primary"></i> {{ pedido.clienteWhatsapp }}</span>
-              <span class="detalle-item"><i class="bi bi-calendar-event text-primary"></i> {{ pedido.fechaEnvio }}</span>
+              <span class="detalle-item" *ngIf="pedido.clienteDni">
+                <i class="bi bi-person-vcard text-primary"></i> DNI/CE: {{ pedido.clienteDni }}
+              </span>
+              
+              <!-- Código de Cliente -->
+              <span class="detalle-item text-success fw-bold" *ngIf="pedido.codigoCliente">
+                <i class="bi bi-tag-fill"></i> Código: {{ pedido.codigoCliente }}
+              </span>
+
+              <span class="detalle-item">
+                <i class="bi bi-telephone text-primary"></i> {{ pedido.clienteWhatsapp }}
+              </span>
+              
+              <span class="detalle-item">
+                <i class="bi bi-calendar-event text-primary"></i> {{ pedido.fechaEnvio }}
+              </span>
             </div>
 
             <div class="agencia-detalle">
               <i class="bi bi-shop text-secondary me-2"></i>
-              <span *ngIf="pedido.metodoRecibo === 'shalom'">{{ pedido.agenciaShalom }}</span>
+              <!-- Validamos si es Shalom, Olva o Delivery -->
+              <span *ngIf="pedido.metodoRecibo === 'shalom'"><strong>Shalom:</strong> {{ pedido.agenciaShalom }}</span>
+              <span *ngIf="pedido.metodoRecibo === 'olva'"><strong>Olva Courier:</strong> {{ pedido.agenciaShalom }}</span>
               <span *ngIf="pedido.metodoRecibo === 'delivery'"><strong>Delivery:</strong> {{ pedido.distrito }} - {{ pedido.direccion }} | Ref: {{ pedido.referencia }}</span>
             </div>
           </div>
@@ -83,9 +113,6 @@
             <span class="status-badge" [ngClass]="pedido.estado.toLowerCase()">
               {{ pedido.estado }}
             </span>
-            <a [href]="'https://wa.me/51' + pedido.clienteWhatsapp" target="_blank" class="action-btn whatsapp-btn" title="Contactar">
-              <i class="bi bi-whatsapp"></i>
-            </a>
           </div>
 
         </div>
@@ -102,18 +129,31 @@
   @for (pedido of pedidosParaImprimir; track pedido.id) {
     <div class="etiqueta-box">
       
-      <!-- Cabecera -->
+      <!-- Cabecera Dinámica (KyalShop o KyalCourier) -->
       <div class="etiqueta-header">
         <span class="text-muted">REMITENTE</span>
-        <h4 class="fw-bold mb-0">KYALSHOP</h4>
+        <h4 class="fw-bold mb-0">{{ pedido.marca || 'KYALSHOP' }}</h4>
       </div>
 
       <!-- Cuerpo / Destinatario -->
-      <div class="etiqueta-body">
-        <span class="text-muted">DESTINATARIO:</span>
-        <h2 class="fw-bold text-uppercase mt-1 mb-1">{{ pedido.clienteNombre }}</h2>
-        <p class="mb-0 fs-5">Cel: {{ pedido.clienteWhatsapp }}</p>
-        <p class="mb-0 fs-5" *ngIf="pedido.clienteDni">DNI: {{ pedido.clienteDni }}</p>
+      <div class="etiqueta-body d-flex justify-content-between align-items-center">
+        <!-- Lado izquierdo: Textos -->
+        <div class="info-destinatario">
+          <span class="text-muted">DESTINATARIO:</span>
+          <h2 class="fw-bold text-uppercase mt-1 mb-1">{{ pedido.clienteNombre }}</h2>
+          <p class="mb-0 fs-5">Cel: {{ pedido.clienteWhatsapp }}</p>
+          <p class="mb-0 fs-5" *ngIf="pedido.clienteDni">DNI: {{ pedido.clienteDni }}</p>
+          
+          <!-- Código de cliente si existe -->
+          <p class="mb-0 fs-5 fw-bold text-dark" *ngIf="pedido.codigoCliente">Código: {{ pedido.codigoCliente }}</p>
+        </div>
+        
+        <!-- Lado derecho: Logo Dinámico Blanco y Negro -->
+        <div class="print-logo text-end">
+          <img 
+            [src]="pedido.marca === 'KYALCOURIER' ? '/assets/images/logo_kyalcourier.png' : '/assets/images/logo_kyalshop.png'" 
+            alt="Logo Remitente">
+        </div>
       </div>
 
       <!-- Pie / Destino -->
@@ -121,13 +161,14 @@
         <span class="text-muted">DESTINO:</span>
         <p class="fs-5 mb-2">
           <strong *ngIf="pedido.metodoRecibo === 'shalom'">Agencia Shalom:</strong>
+          <strong *ngIf="pedido.metodoRecibo === 'olva'">Agencia Olva Courier:</strong>
           <strong *ngIf="pedido.metodoRecibo === 'delivery'">Delivery:</strong>
-          {{ pedido.metodoRecibo === 'shalom' ? pedido.agenciaShalom : pedido.distrito + ' - ' + pedido.direccion }}
+          {{ pedido.metodoRecibo === 'delivery' ? (pedido.distrito + ' - ' + pedido.direccion) : pedido.agenciaShalom }}
         </p>
         
         <div class="footer-bottom">
           <h4 class="fw-bold bg-light px-2 py-1 rounded d-inline-block text-uppercase">
-            {{ pedido.metodoRecibo === 'shalom' ? 'SHALOM' : 'DELIVERY' }}
+            {{ pedido.metodoRecibo === 'shalom' ? 'SHALOM' : (pedido.metodoRecibo === 'olva' ? 'OLVA COURIER' : 'DELIVERY') }}
           </h4>
           <span class="fw-bold fs-5">{{ pedido.fechaEnvio }}</span>
         </div>

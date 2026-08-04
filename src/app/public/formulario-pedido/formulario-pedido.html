@@ -1,219 +1,670 @@
 <div class="bg-light min-vh-100 py-5">
-  <div class="container" style="max-width: 600px;">
-    
-    <div class="text-center mb-4">
-      <h4 class="fw-bold"><i class="bi bi-box-seam text-primary me-2"></i> KYALSHOP</h4>
-      <p class="text-muted small">FORMULARIO DE ENVÍO</p>
+  <div class="container" style="max-width: 600px">
+    <!-- NUEVA CABECERA CON EL LOGO DINÁMICO -->
+    <div class="text-center mb-4 d-flex flex-column align-items-center">
+      <div
+        class="d-flex justify-content-center align-items-center"
+        style="height: 120px; width: 100%; margin-bottom: 0px"
+      >
+        <img
+          [src]="
+            marcaActual === 'KYALCOURIER'
+              ? '/assets/images/logo_kyalcourier.png'
+              : '/assets/images/logo_kyalshop.png'
+          "
+          [alt]="marcaActual + ' Logo'"
+          [style.height]="marcaActual === 'KYALCOURIER' ? '160px' : '85px'"
+          style="mix-blend-mode: multiply; object-fit: contain; max-width: 100%"
+        />
+      </div>
+
+      <h4 class="fw-bold m-0 mt-2" style="color: #0b3d60">{{ marcaActual }}</h4>
+      <p class="text-muted small mt-1" style="letter-spacing: 1px">
+        FORMULARIO DE ENVÍO
+      </p>
     </div>
 
-    <div class="alert alert-warning mb-4" style="background-color: #fff4e5; border-color: #ffe0b2;">
-      <i class="bi bi-clock me-2 text-warning"></i> 
-      <strong>Hora de corte: 18:00</strong><br>
-      <small class="text-muted">Asegura tu envío registrando tus datos antes de la hora de corte.</small>
-    </div>
-
-    <form [formGroup]="pedidoForm" class="bg-white p-4 rounded shadow-sm">
-      
-      <!-- 1. WHATSAPP DEL CLIENTE -->
-      <div class="mb-4">
-        <label class="form-label fw-bold small" [ngClass]="{'text-danger': pedidoForm.get('whatsappCliente')?.invalid && pedidoForm.get('whatsappCliente')?.touched}">
-          Tu WhatsApp *
-        </label>
-        <div class="input-group">
-          <span class="input-group-text bg-white">+51</span>
-          <input 
-            type="text" 
-            class="form-control" 
-            formControlName="whatsappCliente" 
-            placeholder="987654321"
-            maxlength="9"
-            (keypress)="soloNumeros($event)"
-            [ngClass]="{'is-invalid': pedidoForm.get('whatsappCliente')?.invalid && pedidoForm.get('whatsappCliente')?.touched}">
-        </div>
-
-        <div *ngIf="pedidoForm.get('whatsappCliente')?.invalid && pedidoForm.get('whatsappCliente')?.touched" class="text-danger small mt-1 fw-bold">
-          <span *ngIf="pedidoForm.get('whatsappCliente')?.hasError('required')">
-            <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
-          </span>
-          <span *ngIf="pedidoForm.get('whatsappCliente')?.hasError('pattern') && !pedidoForm.get('whatsappCliente')?.hasError('required')">
-            <i class="bi bi-exclamation-circle"></i> El número debe estar completo (9 dígitos).
-          </span>
-        </div>
+    <!-- ==================================================== -->
+    <!-- PANTALLA 1: FORMULARIO (Se oculta al enviar con éxito) -->
+    <!-- ==================================================== -->
+    <ng-container *ngIf="!mostrarResumen">
+      <div
+        class="alert alert-warning mb-4"
+        style="background-color: #fff4e5; border-color: #ffe0b2"
+      >
+        <i class="bi bi-clock me-2 text-warning"></i>
+        <strong>Hora de corte: 18:00</strong><br />
+        <small class="text-muted"
+          >Asegura tu envío registrando tus datos antes de la hora de
+          corte.</small
+        >
       </div>
 
-      <!-- 2. TIPO DE ENVÍO -->
-      <div class="mb-4" *ngIf="showTipoEnvio">
-        <label class="form-label fw-bold small" [ngClass]="{'text-danger': pedidoForm.get('tipoEnvio')?.invalid && pedidoForm.get('tipoEnvio')?.touched}">
-          ¿Cómo quieres recibir tu pedido? *
-        </label>
-        <select 
-          class="form-select" 
-          formControlName="tipoEnvio"
-          [ngClass]="{'is-invalid': pedidoForm.get('tipoEnvio')?.invalid && pedidoForm.get('tipoEnvio')?.touched}">
-          <option value="" disabled selected>Elige una opción...</option>
-          <option value="shalom">Retiro en agencia Shalom</option>
-          <option value="delivery">Delivery (Solo Lima)</option>
-        </select>
-
-        <div *ngIf="pedidoForm.get('tipoEnvio')?.invalid && pedidoForm.get('tipoEnvio')?.touched" class="text-danger small mt-1 fw-bold">
-          <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
-        </div>
-      </div>
-
-      <!-- 3. BLOQUE SHALOM -->
-      <div *ngIf="tipoSeleccionado === 'shalom'">
-        <div class="mb-3 position-relative">
-          <label class="form-label fw-bold small" [ngClass]="{'text-danger': pedidoForm.get('agenciaShalom')?.invalid && pedidoForm.get('agenciaShalom')?.touched}">
-            Busca tu Agencia *
-          </label>
-          <div class="input-group">
-            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
-            <input 
-              type="text" 
-              class="form-control border-start-0 ps-0" 
-              formControlName="agenciaShalom" 
-              placeholder="Ej: Lima / San Juan de Lurigancho..."
-              autocomplete="off"
-              (focus)="mostrarDropdown = true"
-              (blur)="ocultarDropdown()"
-              [ngClass]="{'is-invalid': pedidoForm.get('agenciaShalom')?.invalid && pedidoForm.get('agenciaShalom')?.touched}">
-          </div>
-          
-          <div *ngIf="pedidoForm.get('agenciaShalom')?.invalid && pedidoForm.get('agenciaShalom')?.touched" class="text-danger small mt-1 fw-bold">
-            <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
-          </div>
-          
-          <div class="custom-dropdown shadow border rounded" *ngIf="mostrarDropdown && agenciasFiltradas.length > 0">
-            @for (agencia of agenciasFiltradas; track agencia.Agencia) {
-              <div class="dropdown-item p-2 border-bottom" (mousedown)="seleccionarAgencia(agencia)" style="cursor: pointer;">
-                <div class="fw-bold text-dark" style="font-size: 0.9rem;">{{agencia.Agencia}}</div>
-                <div class="text-muted" style="font-size: 0.75rem; white-space: normal;">{{agencia.Direccion}}</div>
-              </div>
-            }
-          </div>
-        </div>
-      </div>
-
-      <!-- 4. BLOQUE DELIVERY -->
-      <div *ngIf="tipoSeleccionado === 'delivery'">
-        <div class="mb-3">
-          <label class="form-label fw-bold small" [ngClass]="{'text-danger': pedidoForm.get('distrito')?.invalid && pedidoForm.get('distrito')?.touched}">
-            Distrito *
-          </label>
-          <select 
-            class="form-select" 
-            formControlName="distrito"
-            [ngClass]="{'is-invalid': pedidoForm.get('distrito')?.invalid && pedidoForm.get('distrito')?.touched}">
-            <option value="">Seleccione...</option>
-            @for (distrito of distritos; track distrito.Distrito) {
-              <option [value]="distrito.Distrito">{{distrito.Distrito}}</option>
-            }
-          </select>
-          <div *ngIf="pedidoForm.get('distrito')?.invalid && pedidoForm.get('distrito')?.touched" class="text-danger small mt-1 fw-bold">
-            <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
-          </div>
-        </div>
-        
-        <div class="mb-3">
-          <label class="form-label fw-bold small" [ngClass]="{'text-danger': pedidoForm.get('direccion')?.invalid && pedidoForm.get('direccion')?.touched}">
-            Dirección Exacta *
-          </label>
-          <input 
-            type="text" 
-            class="form-control bg-light" 
-            formControlName="direccion"
-            [ngClass]="{'is-invalid': pedidoForm.get('direccion')?.invalid && pedidoForm.get('direccion')?.touched}">
-          <div *ngIf="pedidoForm.get('direccion')?.invalid && pedidoForm.get('direccion')?.touched" class="text-danger small mt-1 fw-bold">
-            <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
-          </div>
-        </div>
-        
-        <div class="mb-3">
-          <label class="form-label fw-bold small">Referencia</label>
-          <input type="text" class="form-control" formControlName="referencia">
-        </div>
-      </div>
-
-      <!-- 5. CAMPOS COMPARTIDOS FINALES -->
-      <div *ngIf="tipoSeleccionado">
-        
-        <!-- EL DNI AHORA VIVE AQUÍ, ES COMPARTIDO PARA AMBOS MÉTODOS -->
-        <div class="mb-3">
-          <label class="form-label fw-bold small" [ngClass]="{'text-danger': pedidoForm.get('dni')?.invalid && pedidoForm.get('dni')?.touched}">
-            Documento de Identidad *
-          </label>
-          <div class="input-group">
-            <select class="form-select bg-light border-end-0" style="max-width: 90px;" formControlName="tipoDocumento">
-              <option value="DNI">DNI</option>
-              <option value="CE">CE</option>
-            </select>
-            <input 
-              type="text" 
-              class="form-control" 
-              formControlName="dni" 
-              [placeholder]="pedidoForm.get('tipoDocumento')?.value === 'DNI' ? '8 dígitos exactos' : 'Alfanumérico'"
-              [attr.maxlength]="pedidoForm.get('tipoDocumento')?.value === 'DNI' ? 8 : 20"
-              (keypress)="inputDocumento($event)"
-              [ngClass]="{'is-invalid': pedidoForm.get('dni')?.invalid && pedidoForm.get('dni')?.touched}">
-          </div>
-
-          <div *ngIf="pedidoForm.get('dni')?.invalid && pedidoForm.get('dni')?.touched" class="text-danger small mt-1 fw-bold">
-            <span *ngIf="pedidoForm.get('dni')?.hasError('required')">
-              <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
-            </span>
-            <span *ngIf="pedidoForm.get('dni')?.hasError('pattern') && !pedidoForm.get('dni')?.hasError('required')">
-              <i class="bi bi-exclamation-circle"></i> Formato de {{ pedidoForm.get('tipoDocumento')?.value }} inválido.
-            </span>
-          </div>
-        </div>
-        
-        <div class="mb-3">
-          <label class="form-label fw-bold small" [ngClass]="{'text-danger': pedidoForm.get('nombreCompleto')?.invalid && pedidoForm.get('nombreCompleto')?.touched}">
-            Nombre y Apellidos *
-          </label>
-          <input 
-            type="text" 
-            class="form-control bg-light" 
-            formControlName="nombreCompleto"
-            (keypress)="soloLetras($event)"
-            [ngClass]="{'is-invalid': pedidoForm.get('nombreCompleto')?.invalid && pedidoForm.get('nombreCompleto')?.touched}">
-            
-          <div *ngIf="pedidoForm.get('nombreCompleto')?.invalid && pedidoForm.get('nombreCompleto')?.touched" class="text-danger small mt-1 fw-bold">
-            <span *ngIf="pedidoForm.get('nombreCompleto')?.hasError('required')">
-              <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
-            </span>
-            <span *ngIf="pedidoForm.get('nombreCompleto')?.hasError('pattern') && !pedidoForm.get('nombreCompleto')?.hasError('required')">
-              <i class="bi bi-exclamation-circle"></i> {{ mensajes.WRONG_FORMAT }} (Solo letras).
-            </span>
-          </div>
-        </div>
-        
+      <form [formGroup]="pedidoForm" class="bg-white p-4 rounded shadow-sm">
+        <!-- 1. WHATSAPP DEL CLIENTE -->
         <div class="mb-4">
-          <label class="form-label fw-bold small" [ngClass]="{'text-danger': pedidoForm.get('fechaEnvio')?.invalid && pedidoForm.get('fechaEnvio')?.touched}">
-            Fecha de Envío *
+          <label
+            class="form-label fw-bold small"
+            [ngClass]="{
+              'text-danger':
+                pedidoForm.get('whatsappCliente')?.invalid &&
+                pedidoForm.get('whatsappCliente')?.touched,
+            }"
+          >
+            Tu WhatsApp *
           </label>
-          <input 
-            type="date" 
-            class="form-control custom-date-sigloc" 
-            formControlName="fechaEnvio"
-            [min]="fechaMinima"
-            [ngClass]="{'is-invalid': pedidoForm.get('fechaEnvio')?.invalid && pedidoForm.get('fechaEnvio')?.touched}">
-          
-          <div *ngIf="pedidoForm.get('fechaEnvio')?.invalid && pedidoForm.get('fechaEnvio')?.touched" class="text-danger small mt-1 fw-bold">
-            <span *ngIf="pedidoForm.get('fechaEnvio')?.hasError('required')">
+          <div class="input-group">
+            <span class="input-group-text bg-white">+51</span>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="whatsappCliente"
+              placeholder="Ingrese su número"
+              maxlength="9"
+              (keypress)="soloNumeros($event)"
+              [ngClass]="{
+                'is-invalid':
+                  pedidoForm.get('whatsappCliente')?.invalid &&
+                  pedidoForm.get('whatsappCliente')?.touched,
+              }"
+            />
+          </div>
+
+          <div
+            *ngIf="
+              pedidoForm.get('whatsappCliente')?.invalid &&
+              pedidoForm.get('whatsappCliente')?.touched
+            "
+            class="text-danger small mt-1 fw-bold"
+          >
+            <span
+              *ngIf="pedidoForm.get('whatsappCliente')?.hasError('required')"
+            >
               <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
             </span>
-            <span *ngIf="pedidoForm.get('fechaEnvio')?.hasError('diaInvalido') && !pedidoForm.get('fechaEnvio')?.hasError('required')">
-              <i class="bi bi-exclamation-circle"></i> Solo realizamos despachos los días Lunes y Martes.
+            <span
+              *ngIf="
+                pedidoForm.get('whatsappCliente')?.hasError('pattern') &&
+                !pedidoForm.get('whatsappCliente')?.hasError('required')
+              "
+            >
+              <i class="bi bi-exclamation-circle"></i> El número debe estar
+              completo (9 dígitos).
             </span>
           </div>
         </div>
 
-        <button type="button" class="btn btn-primary w-100 py-2 fw-bold" (click)="agendar()">
-          Agendar y ver resumen <i class="bi bi-calendar-check ms-1"></i>
-        </button>
+        <!-- 2. TIPO DE ENVÍO -->
+        <div class="mb-4" *ngIf="showTipoEnvio">
+          <label
+            class="form-label fw-bold small"
+            [ngClass]="{
+              'text-danger':
+                pedidoForm.get('tipoEnvio')?.invalid &&
+                pedidoForm.get('tipoEnvio')?.touched,
+            }"
+          >
+            ¿Cómo quieres recibir tu pedido? *
+          </label>
+          <select
+            class="form-select"
+            formControlName="tipoEnvio"
+            [ngClass]="{
+              'is-invalid':
+                pedidoForm.get('tipoEnvio')?.invalid &&
+                pedidoForm.get('tipoEnvio')?.touched,
+            }"
+          >
+            <option value="" disabled selected>Elige una opción...</option>
+            <option value="shalom">Retiro en agencia Shalom</option>
+            <option value="olva">Retiro en agencia Olva Courier</option>
+            <option value="delivery">Delivery (Solo Lima)</option>
+          </select>
+          <div
+            *ngIf="
+              pedidoForm.get('tipoEnvio')?.invalid &&
+              pedidoForm.get('tipoEnvio')?.touched
+            "
+            class="text-danger small mt-1 fw-bold"
+          >
+            <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
+          </div>
+        </div>
+
+        <!-- 3. BLOQUE OLVA COURIER -->
+        <div *ngIf="tipoSeleccionado === 'olva'">
+          <div class="mb-3 position-relative">
+            <label
+              class="form-label fw-bold small"
+              [ngClass]="{
+                'text-danger':
+                  pedidoForm.get('agenciaOlva')?.invalid &&
+                  pedidoForm.get('agenciaOlva')?.touched,
+              }"
+            >
+              Busca tu Agencia Olva *
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-white border-end-0 text-muted"
+                ><i class="bi bi-search"></i
+              ></span>
+              <input
+                type="text"
+                class="form-control border-start-0 ps-0"
+                [class.border-end-0]="pedidoForm.get('agenciaOlva')?.value"
+                formControlName="agenciaOlva"
+                placeholder="Ingrese su agencia"
+                autocomplete="off"
+                (focus)="mostrarDropdownOlva = true"
+                (blur)="ocultarDropdownOlva()"
+                [ngClass]="{
+                  'is-invalid':
+                    pedidoForm.get('agenciaOlva')?.invalid &&
+                    pedidoForm.get('agenciaOlva')?.touched,
+                }"
+              />
+              <!-- BOTÓN X PARA LIMPIAR OLVA -->
+              <span
+                class="input-group-text bg-white border-start-0 text-secondary"
+                style="cursor: pointer;"
+                *ngIf="pedidoForm.get('agenciaOlva')?.value"
+                (mousedown)="$event.preventDefault(); pedidoForm.get('agenciaOlva')?.setValue('')"
+              >
+                <i class="bi bi-x-circle-fill"></i>
+              </span>
+            </div>
+            <div
+              *ngIf="
+                pedidoForm.get('agenciaOlva')?.invalid &&
+                pedidoForm.get('agenciaOlva')?.touched
+              "
+              class="text-danger small mt-1 fw-bold"
+            >
+              <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
+            </div>
+
+            <!-- Dropdown dinámico para Olva -->
+            <div
+              class="custom-dropdown shadow border rounded"
+              *ngIf="mostrarDropdownOlva && agenciasOlvaFiltradas.length > 0"
+            >
+              @for (agencia of agenciasOlvaFiltradas; track agencia.Agencia) {
+                <div
+                  class="dropdown-item p-2 border-bottom"
+                  (mousedown)="seleccionarAgenciaOlva(agencia)"
+                  style="cursor: pointer"
+                >
+                  <div class="fw-bold text-dark" style="font-size: 0.9rem">
+                    {{ agencia.Agencia }}
+                  </div>
+                  <div
+                    class="text-muted"
+                    style="font-size: 0.75rem; white-space: normal"
+                  >
+                    {{ agencia.Direccion }}
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. BLOQUE SHALOM -->
+        <div *ngIf="tipoSeleccionado === 'shalom'">
+          <div class="mb-3 position-relative">
+            <label
+              class="form-label fw-bold small"
+              [ngClass]="{
+                'text-danger':
+                  pedidoForm.get('agenciaShalom')?.invalid &&
+                  pedidoForm.get('agenciaShalom')?.touched,
+              }"
+            >
+              Busca tu Agencia *
+            </label>
+            <div class="input-group">
+              <span class="input-group-text bg-white border-end-0 text-muted"
+                ><i class="bi bi-search"></i
+              ></span>
+              <input
+                type="text"
+                class="form-control border-start-0 ps-0"
+                [class.border-end-0]="pedidoForm.get('agenciaShalom')?.value"
+                formControlName="agenciaShalom"
+                placeholder="Ingrese su agencia"
+                autocomplete="off"
+                (focus)="mostrarDropdown = true"
+                (blur)="ocultarDropdown()"
+                [ngClass]="{
+                  'is-invalid':
+                    pedidoForm.get('agenciaShalom')?.invalid &&
+                    pedidoForm.get('agenciaShalom')?.touched,
+                }"
+              />
+              <!-- BOTÓN X PARA LIMPIAR SHALOM -->
+              <span
+                class="input-group-text bg-white border-start-0 text-secondary"
+                style="cursor: pointer;"
+                *ngIf="pedidoForm.get('agenciaShalom')?.value"
+                (mousedown)="$event.preventDefault(); pedidoForm.get('agenciaShalom')?.setValue('')"
+              >
+                <i class="bi bi-x-circle-fill"></i>
+              </span>
+            </div>
+
+            <div
+              *ngIf="
+                pedidoForm.get('agenciaShalom')?.invalid &&
+                pedidoForm.get('agenciaShalom')?.touched
+              "
+              class="text-danger small mt-1 fw-bold"
+            >
+              <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
+            </div>
+
+            <div
+              class="custom-dropdown shadow border rounded"
+              *ngIf="mostrarDropdown && agenciasFiltradas.length > 0"
+            >
+              @for (agencia of agenciasFiltradas; track agencia.Agencia) {
+                <div
+                  class="dropdown-item p-2 border-bottom"
+                  (mousedown)="seleccionarAgencia(agencia)"
+                  style="cursor: pointer"
+                >
+                  <div class="fw-bold text-dark" style="font-size: 0.9rem">
+                    {{ agencia.Agencia }}
+                  </div>
+                  <div
+                    class="text-muted"
+                    style="font-size: 0.75rem; white-space: normal"
+                  >
+                    {{ agencia.Direccion }}
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. BLOQUE DELIVERY -->
+        <div *ngIf="tipoSeleccionado === 'delivery'">
+          <div class="mb-3">
+            <label
+              class="form-label fw-bold small"
+              [ngClass]="{
+                'text-danger':
+                  pedidoForm.get('distrito')?.invalid &&
+                  pedidoForm.get('distrito')?.touched,
+              }"
+            >
+              Distrito *
+            </label>
+            <select
+              class="form-select"
+              formControlName="distrito"
+              [ngClass]="{
+                'is-invalid':
+                  pedidoForm.get('distrito')?.invalid &&
+                  pedidoForm.get('distrito')?.touched,
+              }"
+            >
+              <option value="">Ingrese el distrito</option>
+              @for (distrito of distritos; track distrito.Distrito) {
+                <option [value]="distrito.Distrito">
+                  {{ distrito.Distrito }}
+                </option>
+              }
+            </select>
+            <div
+              *ngIf="
+                pedidoForm.get('distrito')?.invalid &&
+                pedidoForm.get('distrito')?.touched
+              "
+              class="text-danger small mt-1 fw-bold"
+            >
+              <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
+            </div>
+          </div>
+
+          <div class="mb-3 position-relative">
+            <label
+              class="form-label fw-bold small"
+              [ngClass]="{
+                'text-danger':
+                  pedidoForm.get('direccion')?.invalid &&
+                  pedidoForm.get('direccion')?.touched,
+              }"
+            >
+              Dirección Exacta *
+            </label>
+            <div class="position-relative">
+              <input
+                type="text"
+                class="form-control bg-light"
+                formControlName="direccion"
+                [style.padding-right]="pedidoForm.get('direccion')?.value ? '35px' : ''"
+                [ngClass]="{
+                  'is-invalid':
+                    pedidoForm.get('direccion')?.invalid &&
+                    pedidoForm.get('direccion')?.touched,
+                }"
+              />
+              <!-- BOTÓN X PARA LIMPIAR DIRECCIÓN -->
+              <i class="bi bi-x-circle-fill position-absolute text-secondary"
+                 style="right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer;"
+                 *ngIf="pedidoForm.get('direccion')?.value"
+                 (mousedown)="$event.preventDefault(); pedidoForm.get('direccion')?.setValue('')">
+              </i>
+            </div>
+            <div
+              *ngIf="
+                pedidoForm.get('direccion')?.invalid &&
+                pedidoForm.get('direccion')?.touched
+              "
+              class="text-danger small mt-1 fw-bold"
+            >
+              <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
+            </div>
+          </div>
+
+          <div class="mb-3 position-relative">
+            <label class="form-label fw-bold small">Referencia</label>
+            <div class="position-relative">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="referencia"
+                [style.padding-right]="pedidoForm.get('referencia')?.value ? '35px' : ''"
+              />
+              <!-- BOTÓN X PARA LIMPIAR REFERENCIA -->
+              <i class="bi bi-x-circle-fill position-absolute text-secondary"
+                 style="right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer;"
+                 *ngIf="pedidoForm.get('referencia')?.value"
+                 (mousedown)="$event.preventDefault(); pedidoForm.get('referencia')?.setValue('')">
+              </i>
+            </div>
+          </div>
+        </div>
+
+        <!-- 5. CAMPOS COMPARTIDOS FINALES -->
+        <div *ngIf="tipoSeleccionado">
+          <!-- EL DNI AHORA VIVE AQUÍ -->
+          <div class="mb-3">
+            <label
+              class="form-label fw-bold small"
+              [ngClass]="{
+                'text-danger':
+                  pedidoForm.get('dni')?.invalid &&
+                  pedidoForm.get('dni')?.touched,
+              }"
+            >
+              Documento de Identidad *
+            </label>
+            <div class="input-group">
+              <select
+                class="form-select bg-light border-end-0"
+                style="max-width: 90px"
+                formControlName="tipoDocumento"
+              >
+                <option value="DNI">DNI</option>
+                <option value="CE">CE</option>
+              </select>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="dni"
+                [placeholder]="
+                  pedidoForm.get('tipoDocumento')?.value === 'DNI'
+                    ? 'Ingrese su DNI'
+                    : 'Alfanumérico'
+                "
+                [attr.maxlength]="
+                  pedidoForm.get('tipoDocumento')?.value === 'DNI' ? 8 : 20
+                "
+                (keypress)="inputDocumento($event)"
+                [ngClass]="{
+                  'is-invalid':
+                    pedidoForm.get('dni')?.invalid &&
+                    pedidoForm.get('dni')?.touched,
+                }"
+              />
+            </div>
+
+            <div
+              *ngIf="
+                pedidoForm.get('dni')?.invalid && pedidoForm.get('dni')?.touched
+              "
+              class="text-danger small mt-1 fw-bold"
+            >
+              <span *ngIf="pedidoForm.get('dni')?.hasError('required')">
+                <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
+              </span>
+              <span
+                *ngIf="
+                  pedidoForm.get('dni')?.hasError('pattern') &&
+                  !pedidoForm.get('dni')?.hasError('required')
+                "
+              >
+                <i class="bi bi-exclamation-circle"></i> Formato de
+                {{ pedidoForm.get("tipoDocumento")?.value }} inválido.
+              </span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label
+              class="form-label fw-bold small"
+              [ngClass]="{
+                'text-danger':
+                  pedidoForm.get('nombreCompleto')?.invalid &&
+                  pedidoForm.get('nombreCompleto')?.touched,
+              }"
+            >
+              Nombre y Apellidos *
+            </label>
+            <input
+              type="text"
+              class="form-control bg-light"
+              formControlName="nombreCompleto"
+              (keypress)="soloLetras($event)"
+              [ngClass]="{
+                'is-invalid':
+                  pedidoForm.get('nombreCompleto')?.invalid &&
+                  pedidoForm.get('nombreCompleto')?.touched,
+              }"
+            />
+
+            <div
+              *ngIf="
+                pedidoForm.get('nombreCompleto')?.invalid &&
+                pedidoForm.get('nombreCompleto')?.touched
+              "
+              class="text-danger small mt-1 fw-bold"
+            >
+              <span
+                *ngIf="pedidoForm.get('nombreCompleto')?.hasError('required')"
+              >
+                <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
+              </span>
+              <span
+                *ngIf="
+                  pedidoForm.get('nombreCompleto')?.hasError('pattern') &&
+                  !pedidoForm.get('nombreCompleto')?.hasError('required')
+                "
+              >
+                <i class="bi bi-exclamation-circle"></i>
+                {{ mensajes.WRONG_FORMAT }} (Solo letras).
+              </span>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-secondary">
+              Código de Cliente
+              <span class="fw-normal text-muted">(Opcional)</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="codigoCliente"
+              placeholder="Ingrese su código"
+            />
+          </div>
+
+          <div class="mb-4">
+            <label
+              class="form-label fw-bold small"
+              [ngClass]="{
+                'text-danger':
+                  pedidoForm.get('fechaEnvio')?.invalid &&
+                  pedidoForm.get('fechaEnvio')?.touched,
+              }"
+            >
+              Fecha de Envío *
+            </label>
+            <input
+              type="date"
+              class="form-control custom-date-sigloc"
+              formControlName="fechaEnvio"
+              [min]="fechaMinima"
+              [ngClass]="{
+                'is-invalid':
+                  pedidoForm.get('fechaEnvio')?.invalid &&
+                  pedidoForm.get('fechaEnvio')?.touched,
+              }"
+            />
+
+            <div
+              *ngIf="
+                pedidoForm.get('fechaEnvio')?.invalid &&
+                pedidoForm.get('fechaEnvio')?.touched
+              "
+              class="text-danger small mt-1 fw-bold"
+            >
+              <span *ngIf="pedidoForm.get('fechaEnvio')?.hasError('required')">
+                <i class="bi bi-exclamation-circle"></i> {{ mensajes.REQUIRED }}
+              </span>
+              <span
+                *ngIf="
+                  pedidoForm.get('fechaEnvio')?.hasError('diaInvalido') &&
+                  !pedidoForm.get('fechaEnvio')?.hasError('required')
+                "
+              >
+                <i class="bi bi-exclamation-circle"></i> Solo realizamos
+                despachos los días Lunes y Martes.
+              </span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary w-100 py-2 fw-bold"
+            (click)="agendar()"
+          >
+            Agendar y ver resumen <i class="bi bi-calendar-check ms-1"></i>
+          </button>
+        </div>
+      </form>
+    </ng-container>
+
+    <!-- ==================================================== -->
+    <!-- PANTALLA 2: RESUMEN DE ÉXITO -->
+    <!-- ==================================================== -->
+    <div
+      *ngIf="mostrarResumen && pedidoRegistrado"
+      class="bg-white p-4 rounded shadow-sm text-center"
+      style="animation: fadeIn 0.5s"
+    >
+      <!-- Círculo Verde de Éxito -->
+      <div class="d-flex justify-content-center mb-3">
+        <div
+          class="rounded-circle d-flex align-items-center justify-content-center"
+          style="width: 80px; height: 80px; background-color: #e6f8ee"
+        >
+          <i class="bi bi-check-lg" style="font-size: 3rem; color: #2ecc71"></i>
+        </div>
       </div>
 
-    </form>
+      <h3 class="fw-bold mb-2 text-dark">¡Registro Exitoso!</h3>
+      <p class="text-muted small px-3 mb-4" style="line-height: 1.5">
+        Tu envío ha sido programado correctamente.<br />
+        Verifica los datos y envíalos por chat con el botón verde.
+      </p>
+
+      <!-- Tarjeta de Resumen -->
+      <div
+        class="card text-start mb-4 shadow-sm border-0"
+        style="background-color: #fcfcfc"
+      >
+        <div class="card-body p-4">
+          <h6
+            class="fw-bold text-muted mb-3"
+            style="letter-spacing: 1px; font-size: 0.8rem"
+          >
+            RESUMEN
+          </h6>
+          <hr class="mt-0 mb-3 text-muted" />
+
+          <div class="mb-3 d-flex align-items-start">
+            <i
+              class="bi bi-box-seam me-3 mt-1"
+              style="color: #8b5a2b; font-size: 1.1rem"
+            ></i>
+            <span class="fw-bold text-dark text-uppercase">
+              {{
+                pedidoRegistrado.metodoRecibo === "shalom"
+                  ? "RETIRO EN AGENCIA SHALOM"
+                  : pedidoRegistrado.metodoRecibo === "olva"
+                  ? "RETIRO EN AGENCIA OLVA COURIER"
+                  : "ENTREGA A DOMICILIO (DELIVERY)"
+              }}
+            </span>
+          </div>
+
+          <div class="mb-3 d-flex align-items-start text-dark">
+            <i
+              class="bi bi-person-fill me-3 text-secondary mt-1"
+              style="font-size: 1.1rem"
+            ></i>
+            <div>
+              <div class="fw-medium">{{ pedidoRegistrado.clienteNombre }}</div>
+              <div class="small">
+                <i class="bi bi-telephone-fill me-1"></i>
+                {{ pedidoRegistrado.clienteWhatsapp }}
+              </div>
+              <div class="small text-success fw-bold mt-1" *ngIf="pedidoRegistrado.codigoCliente">
+                <i class="bi bi-tag-fill me-1"></i> Código: {{ pedidoRegistrado.codigoCliente }}
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-start text-dark">
+            <i
+              class="bi bi-calendar-event me-3 text-danger mt-1"
+              style="font-size: 1.1rem"
+            ></i>
+            <span class="fw-medium">{{ pedidoRegistrado.fechaEnvio }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botón de WhatsApp -->
+      <button
+        class="btn w-100 py-3 fw-bold mb-3 text-white"
+        style="background-color: #25d366; font-size: 1.1rem"
+        (click)="enviarWhatsApp()"
+      >
+        Enviar por WhatsApp <i class="bi bi-whatsapp ms-2"></i>
+      </button>
+
+      <!-- Botón para volver -->
+      <button
+        class="btn btn-link text-muted fw-bold text-decoration-none"
+        (click)="nuevoRegistro()"
+      >
+        Registrar otro envío
+      </button>
+    </div>
   </div>
 </div>

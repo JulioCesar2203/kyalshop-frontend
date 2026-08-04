@@ -1,41 +1,35 @@
 <div class="d-flex justify-content-center align-items-center h-100 p-4">
-  
-  <div class="card share-card shadow-lg text-center p-5">
+  <div class="card share-card shadow bg-white p-5 border-0 rounded-4" style="max-width: 550px; width: 100%;">
     
-    <!-- Icono Circular Superior -->
-    <div class="icon-container mx-auto mb-4 d-flex justify-content-center align-items-center">
-      <i class="bi bi-share-fill text-success fs-3"></i>
+    <div class="text-center mb-4">
+      <h4 class="fw-bold text-dark mb-2">Compartir Formularios</h4>
+      <p class="text-muted small">Copia el enlace correspondiente según el tipo de cliente.</p>
     </div>
 
-    <h3 class="text-white fw-bold mb-3">¡Listo para compartir!</h3>
-    <p class="text-muted small mb-4">
-      Tu formulario personalizado está activo. Comparte el siguiente enlace con tus clientes.
-    </p>
-
-    <!-- Input con el Link -->
-    <div class="mb-4">
-      <input 
-        type="text" 
-        class="form-control text-center custom-link-input" 
-        [value]="linkCompartir" 
-        readonly>
+    <!-- LINK 1: KYALSHOP -->
+    <div class="mb-4 p-3 rounded-3" style="background-color: #f8fafc; border: 1px solid #e2e8f0;">
+      <div class="d-flex align-items-center mb-2">
+        <img src="/assets/images/logo_kyalshop.png" height="24" class="me-2" style="mix-blend-mode: multiply;">
+        <span class="fw-bold text-dark">KyalShop</span>
+      </div>
+      <div class="input-group shadow-sm">
+        <input type="text" class="form-control bg-white fw-medium text-primary" [value]="linkShop" readonly>
+        <button class="btn btn-primary fw-bold px-3" (click)="copiarLink(linkShop)">Copiar</button>
+        <button class="btn btn-outline-secondary px-3" (click)="abrirNuevaPestana(linkShop)"><i class="bi bi-box-arrow-up-right"></i></button>
+      </div>
     </div>
 
-    <!-- Botones de Acción -->
-    <div class="d-flex flex-column gap-3">
-      <button class="btn btn-primary fw-bold py-2" (click)="copiarLink()">
-        Copiar Link
-      </button>
-
-      <button class="btn btn-success fw-bold py-2 custom-wa-btn" (click)="enviarWhatsApp()">
-        <i class="bi bi-whatsapp me-2"></i> Enviar por WhatsApp
-      </button>
-
-      <button class="btn btn-outline-secondary text-white fw-bold py-2 border-0 custom-blank-btn" (click)="abrirNuevaPestana()">
-        <i class="bi bi-box-arrow-up-right me-2"></i> Abrir en nueva pestaña
-      </button>
+    <!-- LINK 2: KYALCOURIER -->
+    <div class="mb-2 p-3 rounded-3" style="background-color: #f8fafc; border: 1px solid #e2e8f0;">
+      <div class="d-flex align-items-center mb-2">
+        <span class="fw-bold text-dark"><i class="bi bi-airplane-engines-fill text-warning me-2"></i>KyalCourier</span>
+      </div>
+      <div class="input-group shadow-sm">
+        <input type="text" class="form-control bg-white fw-medium text-primary" [value]="linkCourier" readonly>
+        <button class="btn btn-warning text-dark fw-bold px-3" (click)="copiarLink(linkCourier)">Copiar</button>
+        <button class="btn btn-outline-secondary px-3" (click)="abrirNuevaPestana(linkCourier)"><i class="bi bi-box-arrow-up-right"></i></button>
+      </div>
     </div>
 
   </div>
-
 </div>

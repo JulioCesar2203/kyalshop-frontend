@@ -3,6 +3,7 @@ import { MENU_KYALSHOP, SUBMENUS_KYALSHOP } from '../../../core/constants/menu';
 import { StorageService } from '../../../auth/services/storage.service';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { LoginService } from '../../../auth/services/login.service';
 
 @Component({
   selector: 'app-admin-layout',
@@ -13,6 +14,7 @@ import { CommonModule } from '@angular/common';
 export class AdminLayoutComponent {
   private storageService = inject(StorageService);
   public router = inject(Router);
+  private loginService = inject(LoginService);
 
   get esPantallaInicio(): boolean {
     return this.router.url === '/admin/inicio';
@@ -28,7 +30,18 @@ export class AdminLayoutComponent {
   }
 
   cerrarSesion() {
-    this.storageService.clearSession();
-    this.router.navigate(['/login']);
+    this.loginService.logout().subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.storageService.clearSession();
+          this.router.navigate(['/login']);
+        }
+      },
+      error: (err) => {
+        console.error('Error al cerrar sesión en backend:', err);
+        this.storageService.clearSession();
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }

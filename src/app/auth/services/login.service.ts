@@ -11,8 +11,13 @@ import { environment } from '../../environment/environment';
 export class LoginService {
   private http = inject(HttpClient);
   private readonly urlLogin = environment.apiUrl + '/api/auth/login';
+  private readonly urlLogout = environment.apiUrl + '/api/auth/logout';
 
   login(request: LoginRequestDto): Observable<GenericResponse<LoginResponseDto>> {
     return this.http.post<GenericResponse<LoginResponseDto>>(this.urlLogin, request);
+  }
+
+  logout(): Observable<GenericResponse<string>> {
+    return this.http.post<GenericResponse<string>>(this.urlLogout, {});
   }
 }

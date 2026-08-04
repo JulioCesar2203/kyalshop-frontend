@@ -15,10 +15,15 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   username = '';
   password = '';
+  showPassword = false;
   
   private authService = inject(LoginService);
   private storageService = inject(StorageService);
   private router = inject(Router);
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
 
   login() {
     if (!this.username || !this.password) {

@@ -1,34 +1,52 @@
+/* 1. ESTILOS DE LA MARCA DE AGUA (El logo gigante en el fondo) */
+.watermark-logo {
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  height: 220px;
+  transform: translateY(-50%) rotate(-15deg); 
+  
+  /* AQUÍ ESTÁ EL COMANDO MAGICO */
+  /* Cámbialo de 0.15 a 0.3 o 0.4 para ir probando */
+  opacity: 0.6; 
+  
+  pointer-events: none; 
+  z-index: 1;
+  mix-blend-mode: multiply; 
+}
+
+/* 2. ESTILOS Y ANIMACIONES DE LAS TARJETAS */
 .module-card {
-  background-color: #ffffff !important; /* Forzamos el fondo blanco */
-  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.05) !important;
   
+  /* Efecto al pasar el mouse */
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-10px); /* Hace que la tarjeta "salte" hacia arriba */
+    box-shadow: 0 1.5rem 3rem rgba(11, 61, 96, 0.15) !important; /* Sombra azulada elegante */
+    
+    .icon-circle {
+      background-color: #0b3d60; /* El círculo se pinta del azul corporativo */
+      color: white !important;
+      transform: scale(1.1); /* El ícono crece un poquito */
+    }
+    
+    .module-title {
+      color: #0b3d60; /* El título se pinta de azul */
+    }
   }
-  
-  .icon-circle {
-    width: 80px;
-    height: 80px;
-    background-color: #f0f7ff; /* Azul muy clarito para el fondo del ícono */
-    color: #003366; /* Azul oscuro institucional para el ícono */
-    transition: all 0.3s ease;
-  }
+}
 
-  .module-title {
-    color: #1e293b !important; /* Texto oscuro para que resalte sobre el blanco */
-    transition: color 0.3s ease;
-  }
+/* 3. ESTILOS DEL CÍRCULO DEL ÍCONO */
+.icon-circle {
+  width: 85px;
+  height: 85px;
+  background-color: #f8fafc;
+  color: #475569;
+  transition: all 0.3s ease;
+}
 
-  /* Efecto mágico al pasar el mouse */
-  &:hover .icon-circle {
-    background-color: #003366;
-    color: #ffffff;
-  }
-  
-  &:hover .module-title {
-    color: #003366 !important;
-  }
+.module-title {
+  transition: color 0.3s ease;
 }
