@@ -50,19 +50,35 @@
 
     <!-- LISTADO DE PEDIDOS -->
     <div class="pedidos-list">
+
+      <!-- NUEVO: FILTRO DE FECHAS (Solo para ENVIADOS) -->
+      <div *ngIf="estadoSeleccionado === 'ENVIADO'" class="bg-white p-3 rounded-3 shadow-sm border d-flex gap-3 align-items-end mb-3 fade-in">
+        <div>
+          <label class="form-label small fw-bold text-secondary mb-1"><i class="bi bi-calendar3"></i> Desde el (Lunes)</label>
+          <input type="date" class="form-control" [(ngModel)]="fechaDesde" (change)="aplicarFiltroPersonalizado()">
+        </div>
+        <div>
+          <label class="form-label small fw-bold text-secondary mb-1"><i class="bi bi-calendar3"></i> Hasta el (Domingo)</label>
+          <input type="date" class="form-control" [(ngModel)]="fechaHasta" (change)="aplicarFiltroPersonalizado()">
+        </div>
+        <div class="flex-grow-1 text-end text-muted small pb-2">
+          <i class="bi bi-info-circle-fill text-primary"></i> Filtrando por rango de fechas.
+        </div>
+      </div>
       
       <!-- Estado Vacío -->
-      <div *ngIf="pedidosFiltrados.length === 0" class="empty-state shadow-sm">
+      <div *ngIf="listadoPedidos.length === 0" class="empty-state shadow-sm">
         <i class="bi bi-inbox"></i>
         <p>No hay envíos registrados en este estado o marca.</p>
       </div>
 
-      <!-- Tarjetas de Envíos -->
-      @for (pedido of pedidosFiltrados; track pedido.id) {
-        <div class="pedido-card shadow-sm" [ngClass]="{'selected': pedidosSeleccionados.has(pedido.id)}">
+      <!-- Tarjetas de Envíos (Iterando directo sobre listadoPedidos) -->
+      @for (pedido of listadoPedidos; track pedido.id) {
+        <div class="pedido-card shadow-sm border d-flex gap-3 align-items-center" 
+             [ngClass]="{'border-primary bg-light': pedidosSeleccionados.has(pedido.id)}">
           
           <!-- Checkbox de Selección -->
-          <div class="checkbox-col">
+          <div class="checkbox-col m-0 pt-1">
             <input 
               type="checkbox" 
               class="custom-checkbox" 
@@ -71,52 +87,84 @@
           </div>
 
           <!-- Información Central -->
-          <div class="info-col">
-            <!-- Etiqueta visual pequeña para saber de qué marca es el pedido -->
-            <span class="badge bg-light text-secondary border mb-1 d-inline-block" style="font-size: 0.7rem;">
-              {{ pedido.marca || 'KYALSHOP' }}
-            </span>
+          <div class="info-col w-100">
             
-            <!-- Nombre del cliente -->
-            <h5 class="cliente-nombre m-0 mb-2 mt-1">{{ pedido.clienteNombre }}</h5>
+            <!-- FILA 1: Marca, Nombre y Estado -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div>
+                <span class="badge bg-light text-secondary border mb-1 d-inline-block" style="font-size: 0.7rem;">
+                  {{ pedido.marca || 'KYALSHOP' }}
+                </span>
+                <h5 class="cliente-nombre m-0">{{ pedido.clienteNombre }}</h5>
+              </div>
+              
+              <!-- Estado con Ícono y Centrado -->
+              <span class="status-badge shadow-sm" [ngClass]="pedido.estado.toLowerCase()">
+                <i class="bi" [ngClass]="{'bi-clock-history': pedido.estado === 'PENDIENTE', 'bi-check2-all': pedido.estado === 'ENVIADO'}"></i>
+                {{ pedido.estado }}
+              </span>
+            </div>
             
-            <div class="cliente-detalles">
+            <!-- FILA 2: Detalles (DNI, Cel, Fecha) -->
+            <div class="cliente-detalles mb-3">
               <span class="detalle-item" *ngIf="pedido.clienteDni">
                 <i class="bi bi-person-vcard text-primary"></i> DNI/CE: {{ pedido.clienteDni }}
               </span>
-              
-              <!-- Código de Cliente -->
               <span class="detalle-item text-success fw-bold" *ngIf="pedido.codigoCliente">
                 <i class="bi bi-tag-fill"></i> Código: {{ pedido.codigoCliente }}
               </span>
-
               <span class="detalle-item">
                 <i class="bi bi-telephone text-primary"></i> {{ pedido.clienteWhatsapp }}
               </span>
-              
               <span class="detalle-item">
                 <i class="bi bi-calendar-event text-primary"></i> {{ pedido.fechaEnvio }}
               </span>
             </div>
 
-            <div class="agencia-detalle">
-              <i class="bi bi-shop text-secondary me-2"></i>
-              <!-- Validamos si es Shalom, Olva o Delivery -->
-              <span *ngIf="pedido.metodoRecibo === 'shalom'"><strong>Shalom:</strong> {{ pedido.agenciaShalom }}</span>
-              <span *ngIf="pedido.metodoRecibo === 'olva'"><strong>Olva Courier:</strong> {{ pedido.agenciaShalom }}</span>
-              <span *ngIf="pedido.metodoRecibo === 'delivery'"><strong>Delivery:</strong> {{ pedido.distrito }} - {{ pedido.direccion }} | Ref: {{ pedido.referencia }}</span>
+            <!-- FILA 3: Caja Gris de Agencia y Botón Anular -->
+            <div class="d-flex justify-content-between align-items-center gap-3">
+              
+              <!-- Caja Gris -->
+              <div class="agencia-detalle flex-grow-1 m-0">
+                <i class="bi bi-shop text-secondary me-2"></i>
+                <span *ngIf="pedido.metodoRecibo === 'shalom'"><strong>Shalom:</strong> {{ pedido.agenciaShalom }}</span>
+                <span *ngIf="pedido.metodoRecibo === 'olva'"><strong>Olva Courier:</strong> {{ pedido.agenciaShalom }}</span>
+                <span *ngIf="pedido.metodoRecibo === 'delivery'"><strong>Delivery:</strong> {{ pedido.distrito }} - {{ pedido.direccion }} | Ref: {{ pedido.referencia }}</span>
+              </div>
+              
+              <!-- Botón Anular -->
+              <button *ngIf="pedido.estado === 'PENDIENTE'" 
+                      class="btn btn-outline-danger btn-sm fw-bold d-flex align-items-center gap-1 px-3 flex-shrink-0" 
+                      (click)="anularPedido(pedido.id)"
+                      title="Anular este pedido">
+                <i class="bi bi-x-circle-fill"></i> Anular
+              </button>
             </div>
+            
           </div>
-
-          <!-- Acciones y Estado -->
-          <div class="action-col">
-            <span class="status-badge" [ngClass]="pedido.estado.toLowerCase()">
-              {{ pedido.estado }}
-            </span>
-          </div>
-
         </div>
       }
+
+      <!-- CONTROLES DE PAGINACIÓN MINIMALISTA (Centrados y sin texto extra) -->
+      <div *ngIf="listadoPedidos.length > 0" class="d-flex justify-content-center align-items-center mt-2 p-3 bg-white border rounded shadow-sm">
+        <div class="d-flex gap-2">
+          <button class="btn btn-sm btn-outline-primary fw-bold px-3 d-flex align-items-center gap-1" 
+                  [disabled]="paginaActual === 1" 
+                  (click)="cambiarPagina(-1)">
+            <i class="bi bi-chevron-left"></i> Anterior
+          </button>
+          
+          <span class="btn btn-sm btn-light fw-bold px-4 border text-muted" style="pointer-events: none;">
+            {{ paginaActual }} de {{ totalPaginas }}
+          </span>
+          
+          <button class="btn btn-sm btn-outline-primary fw-bold px-3 d-flex align-items-center gap-1" 
+                  [disabled]="paginaActual === totalPaginas" 
+                  (click)="cambiarPagina(1)">
+            Siguiente <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
 
     </div>
   </div>

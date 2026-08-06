@@ -1,16 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { PedidoService } from '../../services/pedido.service';
 import { ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-gestion-envios',
-  imports: [CommonModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './gestion-envios.html',
   styleUrl: './gestion-envios.scss',
 })
-export class GestionEnviosComponent {
+export class GestionEnviosComponent implements OnInit {
   private pedidoService = inject(PedidoService);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
@@ -21,48 +23,100 @@ export class GestionEnviosComponent {
   tipoBandejaActual: string = 'shalom';
   pedidosParaImprimir: any[] = [];
   marcaSeleccionada: string = 'TODOS';
+  paginaActual: number = 1;
+  itemsPorPagina: number = 10;
+  totalPaginas: number = 1;
+  
+  fechaDesde: string = '';
+  fechaHasta: string = '';
 
   ngOnInit() {
-    this.cargarPedidos();
+    this.configurarFechasPorDefecto();
 
-    // Nos suscribimos a los cambios de la URL
     this.route.url.subscribe(url => {
       if (url.length > 0) {
         this.tipoBandejaActual = url[0].path;
         this.pedidosSeleccionados.clear();
+        this.paginaActual = 1;
+        this.cargarPedidos();
       }
     });
   }
 
+  configurarFechasPorDefecto() {
+    const hoy = new Date();
+    const anio = hoy.getFullYear();
+    const mes = hoy.getMonth();
+
+    let primerLunes = new Date(anio, mes, 1);
+    while (primerLunes.getDay() !== 1) {
+      primerLunes.setDate(primerLunes.getDate() + 1);
+    }
+
+    let ultimoDomingo = new Date(anio, mes + 1, 0);
+    while (ultimoDomingo.getDay() !== 0) {
+      ultimoDomingo.setDate(ultimoDomingo.getDate() - 1);
+    }
+
+    this.fechaDesde = this.formatearFecha(primerLunes);
+    this.fechaHasta = this.formatearFecha(ultimoDomingo);
+  }
+
+  formatearFecha(fecha: Date): string {
+    const anio = fecha.getFullYear();
+    const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    const dia = fecha.getDate().toString().padStart(2, '0');
+    return `${anio}-${mes}-${dia}`;
+  }
+
   cargarPedidos() {
-    this.pedidoService.listarPedidos().subscribe({
+    const pageApi = this.paginaActual - 1; 
+
+    this.pedidoService.listarPedidosPaginados(
+      pageApi,
+      this.itemsPorPagina,
+      this.estadoSeleccionado,
+      this.tipoBandejaActual,
+      this.marcaSeleccionada,
+      this.fechaDesde,
+      this.fechaHasta
+    ).subscribe({
       next: (res: any) => {
-        if (res.success) {
-          this.listadoPedidos = res.data;
+        if (res.success && res.data) {
+          this.listadoPedidos = res.data.content; 
+          this.totalPaginas = res.data.totalPages === 0 ? 1 : res.data.totalPages;
+        } else {
+          this.listadoPedidos = [];
+          this.totalPaginas = 1;
         }
       },
       error: (err) => console.error('Error al cargar pedidos:', err)
     });
   }
 
-  get pedidosFiltrados() {
-    return this.listadoPedidos.filter(p => {
-      const coincideEstado = p.estado === this.estadoSeleccionado;
-      const coincideBandeja = p.metodoRecibo === this.tipoBandejaActual;
-      const coincideMarca = this.marcaSeleccionada === 'TODOS' || (p.marca || 'KYALSHOP') === this.marcaSeleccionada;
-      
-      return coincideEstado && coincideBandeja && coincideMarca;
-    });
+  cambiarPagina(delta: number) {
+    const nuevaPagina = this.paginaActual + delta;
+    if (nuevaPagina >= 1 && nuevaPagina <= this.totalPaginas) {
+      this.paginaActual = nuevaPagina;
+      this.pedidosSeleccionados.clear();
+      this.cargarPedidos();
+    }
+  }
+
+  aplicarFiltroPersonalizado() {
+    this.paginaActual = 1;
+    this.pedidosSeleccionados.clear();
+    this.cargarPedidos();
   }
 
   cambiarMarca(marca: string) {
     this.marcaSeleccionada = marca;
-    this.pedidosSeleccionados.clear();
+    this.aplicarFiltroPersonalizado();
   }
 
   cambiarTab(estado: string) {
     this.estadoSeleccionado = estado;
-    this.pedidosSeleccionados.clear();
+    this.aplicarFiltroPersonalizado();
   }
 
   toggleSeleccion(id: number) {
@@ -80,6 +134,8 @@ export class GestionEnviosComponent {
     }
 
     const idsSeleccionados = Array.from(this.pedidosSeleccionados);
+    
+    this.pedidosParaImprimir = this.listadoPedidos.filter(p => idsSeleccionados.includes(p.id));
 
     const request = {
       ids: idsSeleccionados,
@@ -89,10 +145,9 @@ export class GestionEnviosComponent {
     this.pedidoService.cambiarEstadoMasivo(request).subscribe({
       next: (res: any) => {
         if (res.success) {
-          this.cargarPedidos();
           this.pedidosSeleccionados.clear();
-
           this.estadoSeleccionado = 'ENVIADO';
+          this.aplicarFiltroPersonalizado();
 
           Swal.fire({
             title: '¡Estados actualizados!',
@@ -101,7 +156,7 @@ export class GestionEnviosComponent {
             timer: 1500,
             showConfirmButton: false
           }).then(() => {
-            this.abrirModalImpresion(idsSeleccionados);
+            this.abrirModalImpresion();
           });
         }
       },
@@ -111,7 +166,7 @@ export class GestionEnviosComponent {
     });
   }
 
-  abrirModalImpresion(ids: number[]) {
+  abrirModalImpresion() {
     Swal.fire({
       title: '<h3 class="fw-bold">Formato de Impresión</h3>',
       html: '<p class="text-muted">¿Cómo deseas organizar las etiquetas en la hoja?</p>',
@@ -123,16 +178,51 @@ export class GestionEnviosComponent {
       reverseButtons: true
     }).then((result) => {
       if (result.isConfirmed) {
-        this.ejecutarImpresionReal(ids);
+        this.ejecutarImpresionReal();
       }
     });
   }
 
-  ejecutarImpresionReal(ids: number[]) {
-    this.pedidosParaImprimir = this.listadoPedidos.filter(p => ids.includes(p.id));
+  ejecutarImpresionReal() {
     this.cdr.detectChanges();
     setTimeout(() => {
       window.print();
     }, 500);
+  }
+
+  anularPedido(id: number) {
+    Swal.fire({
+      title: '¿Estás seguro de que quieres anular este pedido?',
+      text: "Esta acción cambiará el estado a ANULADO y ya no aparecerá en esta bandeja ni en los reportes.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6c757d',
+      confirmButtonText: '<i class="bi bi-x-circle-fill"></i> Sí, anular pedido',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.pedidoService.anularPedidos([id]).subscribe({
+          next: (res: any) => {
+            if (res.success) {
+              this.pedidosSeleccionados.delete(id);
+              this.cargarPedidos();
+              
+              Swal.fire({
+                title: '¡Anulado!',
+                text: 'El pedido ha sido anulado correctamente.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+              });
+            }
+          },
+          error: (err) => {
+            Swal.fire('Error', 'No se pudo anular el pedido', 'error');
+          }
+        });
+      }
+    });
   }
 }
