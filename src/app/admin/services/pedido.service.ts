@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment/environment';
+import { FiltroPedidoDto } from '../interfaces/filtroPedido.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -27,16 +28,16 @@ export class PedidoService {
     return this.http.put(`${this.apiUrl}/anular`, ids);
   }
 
-  listarPedidosPaginados(page: number, size: number, estado: string, bandeja: string, marca: string, fechaDesde: string, fechaHasta: string): Observable<any> {
+  llistarPedidosPaginados(page: number, size: number, filtro: FiltroPedidoDto): Observable<any> {
     let params = new HttpParams()
       .set('page', page)
       .set('size', size)
-      .set('estado', estado)
-      .set('bandeja', bandeja)
-      .set('marca', marca);
+      .set('estado', filtro.estado)
+      .set('bandeja', filtro.bandeja)
+      .set('marca', filtro.marca);
 
-    if (estado === 'ENVIADO') {
-      params = params.set('fechaDesde', fechaDesde).set('fechaHasta', fechaHasta);
+    if (filtro.estado === 'ENVIADO' && filtro.fechaDesde && filtro.fechaHasta) {
+      params = params.set('fechaDesde', filtro.fechaDesde).set('fechaHasta', filtro.fechaHasta);
     }
 
     return this.http.get(`${this.apiUrl}/listar-paginado`, { params });

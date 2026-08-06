@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { PedidoService } from '../../services/pedido.service';
 import { ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
+import { PedidoService } from '../../services/pedido.service';
+import { FiltroPedidoDto } from '../../interfaces/filtroPedido.interface';
 
 @Component({
   selector: 'app-gestion-envios',
@@ -45,21 +46,17 @@ export class GestionEnviosComponent implements OnInit {
 
   configurarFechasPorDefecto() {
     const hoy = new Date();
-    const anio = hoy.getFullYear();
-    const mes = hoy.getMonth();
+    const diaDeLaSemana = hoy.getDay(); 
+    const diferenciaAlLunes = diaDeLaSemana === 0 ? -6 : 1 - diaDeLaSemana;
 
-    let primerLunes = new Date(anio, mes, 1);
-    while (primerLunes.getDay() !== 1) {
-      primerLunes.setDate(primerLunes.getDate() + 1);
-    }
+    const lunes = new Date(hoy);
+    lunes.setDate(hoy.getDate() + diferenciaAlLunes);
+    
+    const domingo = new Date(lunes);
+    domingo.setDate(lunes.getDate() + 6);
 
-    let ultimoDomingo = new Date(anio, mes + 1, 0);
-    while (ultimoDomingo.getDay() !== 0) {
-      ultimoDomingo.setDate(ultimoDomingo.getDate() - 1);
-    }
-
-    this.fechaDesde = this.formatearFecha(primerLunes);
-    this.fechaHasta = this.formatearFecha(ultimoDomingo);
+    this.fechaDesde = this.formatearFecha(lunes);
+    this.fechaHasta = this.formatearFecha(domingo);
   }
 
   formatearFecha(fecha: Date): string {
@@ -72,25 +69,29 @@ export class GestionEnviosComponent implements OnInit {
   cargarPedidos() {
     const pageApi = this.paginaActual - 1; 
 
-    this.pedidoService.listarPedidosPaginados(
-      pageApi,
-      this.itemsPorPagina,
-      this.estadoSeleccionado,
-      this.tipoBandejaActual,
-      this.marcaSeleccionada,
-      this.fechaDesde,
-      this.fechaHasta
-    ).subscribe({
+    const filtro: FiltroPedidoDto = {
+      estado: this.estadoSeleccionado,
+      bandeja: this.tipoBandejaActual,
+      marca: this.marcaSeleccionada,
+      fechaDesde: this.fechaDesde,
+      fechaHasta: this.fechaHasta
+    };
+
+    this.pedidoService.llistarPedidosPaginados(pageApi, this.itemsPorPagina, filtro).subscribe({
       next: (res: any) => {
         if (res.success && res.data) {
-          this.listadoPedidos = res.data.content; 
-          this.totalPaginas = res.data.totalPages === 0 ? 1 : res.data.totalPages;
+          this.listadoPedidos = res.data.content;
+          this.totalPaginas = res.data.totalPages > 0 ? res.data.totalPages : 1;
         } else {
           this.listadoPedidos = [];
           this.totalPaginas = 1;
         }
       },
-      error: (err) => console.error('Error al cargar pedidos:', err)
+      error: (err) => {
+        console.error('Error al cargar pedidos:', err);
+        this.listadoPedidos = [];
+        this.totalPaginas = 1;
+      }
     });
   }
 
@@ -115,7 +116,10 @@ export class GestionEnviosComponent implements OnInit {
   }
 
   cambiarTab(estado: string) {
+    if (this.estadoSeleccionado === estado) return;
+    
     this.estadoSeleccionado = estado;
+    this.listadoPedidos = [];
     this.aplicarFiltroPersonalizado();
   }
 
