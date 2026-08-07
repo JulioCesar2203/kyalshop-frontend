@@ -222,7 +222,7 @@
   /* LA CAJA DEBE MEDIR EXACTAMENTE 150x100mm */
   .etiqueta-box {
     width: 150mm !important;
-    height: 100mm !important;
+    height: 99mm !important;
     box-sizing: border-box !important;
     border: 2px solid #000;
     border-radius: 8px;
@@ -272,13 +272,14 @@
 
       .print-logo {
         flex-shrink: 0; 
-        width: 140px; /* Ancho equilibrado para que luzca bien sin comerse la hoja */
+        width: 200px; /* 1. Aumentamos el ancho para que el logo se vea más grande */
         text-align: center;
+        margin-right: 40px; /* 2. Esto lo empuja desde el borde derecho hacia el centro */
         
         img {
           width: 100%; 
           height: auto; 
-          max-height: 85px; /* Altura controlada para que respete el espacio central */
+          max-height: 105px; /* 3. Aumentamos el tope de altura (antes 85px) */
           object-fit: contain; 
           mix-blend-mode: multiply; 
           filter: grayscale(100%) contrast(150%);

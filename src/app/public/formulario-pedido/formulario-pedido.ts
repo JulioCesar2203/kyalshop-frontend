@@ -361,8 +361,20 @@ export class FormularioPedidoComponent implements OnInit {
     const tipoText =
       this.pedidoRegistrado.metodoRecibo === 'shalom'
         ? 'RETIRO EN AGENCIA SHALOM'
+        : this.pedidoRegistrado.metodoRecibo === 'olva'
+        ? 'RETIRO EN AGENCIA OLVA COURIER'
         : 'ENTREGA A DOMICILIO (DELIVERY)';
-    const msj = `¡Hola KyalShop! Acabo de registrar mi envío. 📦\n\n*Resumen de mi pedido:*\n👤 *Nombre:* ${this.pedidoRegistrado.clienteNombre}\n📅 *Fecha:* ${this.pedidoRegistrado.fechaEnvio}\n🚚 *Tipo:* ${tipoText}\n\nQuedo atento a la confirmación.`;
+
+    let msj = `¡Hola KyalShop! Acabo de registrar mi envío. 📦\n\n*Resumen de mi pedido:*\n`;
+    msj += `👤 *Nombre:* ${this.pedidoRegistrado.clienteNombre}\n`;
+
+    if (this.pedidoRegistrado.codigoCliente) {
+      msj += `🏷️ *Código:* ${this.pedidoRegistrado.codigoCliente}\n`;
+    }
+
+    msj += `📅 *Fecha:* ${this.pedidoRegistrado.fechaEnvio}\n`;
+    msj += `🚚 *Tipo:* ${tipoText}\n\n`;
+    msj += `Quedo atento a la confirmación.`;
 
     const url = `https://wa.me/51${this.numeroWhatsAppDestino}?text=${encodeURIComponent(msj)}`;
 

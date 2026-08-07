@@ -62,7 +62,7 @@
           <input type="date" class="form-control" [(ngModel)]="fechaHasta" (change)="aplicarFiltroPersonalizado()">
         </div>
         <div class="flex-grow-1 text-end text-muted small pb-2">
-          <i class="bi bi-info-circle-fill text-primary"></i> Filtrando por rango de fechas.
+          <i class="bi bi-info-circle-fill text-primary"></i> Mostrando historial según la <strong>fecha de generación de etiqueta</strong> (despacho).
         </div>
       </div>
       
@@ -199,7 +199,7 @@
         <!-- Lado derecho: Logo Dinámico Blanco y Negro -->
         <div class="print-logo text-end">
           <img 
-            [src]="pedido.marca === 'KYALCOURIER' ? '/assets/images/logo_kyalcourier.png' : '/assets/images/logo_kyalshop.png'" 
+            [src]="pedido.marca === 'KYALCOURIER' ? '/assets/images/logo_kyalcourier2.png' : '/assets/images/logo_kyalshop2.png'" 
             alt="Logo Remitente">
         </div>
       </div>
