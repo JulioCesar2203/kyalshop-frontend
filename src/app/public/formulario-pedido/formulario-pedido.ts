@@ -200,8 +200,9 @@ export class FormularioPedidoComponent implements OnInit {
   }
 
   soloLetras(event: KeyboardEvent) {
-    const charCode = event.key.charCodeAt(0);
-    if (charCode >= 48 && charCode <= 57) {
+    const regex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+    
+    if (!regex.test(event.key)) {
       event.preventDefault();
     }
   }
@@ -365,7 +366,9 @@ export class FormularioPedidoComponent implements OnInit {
         ? 'RETIRO EN AGENCIA OLVA COURIER'
         : 'ENTREGA A DOMICILIO (DELIVERY)';
 
-    let msj = `¡Hola KyalShop! Acabo de registrar mi envío. 📦\n\n*Resumen de mi pedido:*\n`;
+    const nombreMarca = this.marcaActual === 'KYALCOURIER' ? 'KyalCourier' : 'KyalShop';
+
+    let msj = `¡Hola ${nombreMarca}! Acabo de registrar mi envío. 📦\n\n*Resumen de mi pedido:*\n`;
     msj += `👤 *Nombre:* ${this.pedidoRegistrado.clienteNombre}\n`;
 
     if (this.pedidoRegistrado.codigoCliente) {

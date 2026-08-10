@@ -8,5 +8,5 @@ export enum VALIDATION_MESSAGE {
 export const REGEX_PATTERN = {
   CELULAR_PERU: '^9[0-9]{8}$', 
   NUMBER: '^[0-9]*$',
-  NOMBRES: "^[a-zA-ZÁÉÍÓÚáéíóúñÑäÄëËïÏöÖüÜ]+(?:[\\.,'—\\-]? [a-zA-ZÁÉÍÓÚáéíóúñÑäÄëËïÏöÖüÜ]+|[\\.,'—\\-]?[a-zA-ZÁÉÍÓÚáéíóúñÑäÄëËïÏöÖüÜ]+)*$",
+  NOMBRES: '^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$',
 };
