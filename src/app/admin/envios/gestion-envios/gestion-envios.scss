@@ -187,7 +187,7 @@
 @media print {
   @page {
     size: 150mm 100mm;
-    margin: 0 !important;
+    margin: 0; /* Sin el important para que Chrome lo asimile mejor */
   }
 
   ::ng-deep html, 
@@ -197,10 +197,7 @@
     background-color: white !important;
   }
 
-  .panel-container {
-    display: none !important;
-  }
-
+  .panel-container,
   ::ng-deep .sidebar,
   ::ng-deep .navbar,
   ::ng-deep header,
@@ -214,30 +211,42 @@
 
   .print-only {
     display: block !important;
-    width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
   }
 
-  /* LA CAJA DEBE MEDIR EXACTAMENTE 150x100mm */
+  /* LA CAJA REDUCIDA A 95mm PARA TENER UN MARGEN DE SEGURIDAD */
   .etiqueta-box {
     width: 150mm !important;
-    height: 99mm !important;
+    height: 95mm !important; /* <--- Bajamos a 95mm */
     box-sizing: border-box !important;
     border: 2px solid #000;
     border-radius: 8px;
-    padding: 8px 12px; /* Reducimos ligeramente el padding para ganar espacio útil */
+    padding: 8px 12px;
     margin: 0 !important; 
     font-family: Arial, sans-serif;
     color: #000;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    page-break-after: always !important;
-    break-after: page !important;
-    page-break-inside: avoid !important;
-    overflow: hidden !important; /* Evita que cualquier elemento rompa los 100mm */
+    overflow: hidden !important; 
     
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+
+    /* Salto de página antes de cada etiqueta nueva */
+    page-break-before: always !important;
+    break-before: page !important;
+
+    /* Excepto en la primera, para no dejar hoja en blanco al inicio */
+    &:first-of-type, &:first-child {
+      page-break-before: auto !important;
+      break-before: auto !important;
+    }
+
+    /* --- ESTILOS INTERNOS DE LA ETIQUETA --- */
     .etiqueta-header {
       display: flex;
       justify-content: space-between;
@@ -260,7 +269,7 @@
         padding-right: 5px; 
         
         h2 {
-          font-size: 17px; /* Letra un poco más compacta para nombres largos como el de tu cliente */
+          font-size: 17px; 
           margin: 3px 0;
           line-height: 1.1;
         }
@@ -272,14 +281,14 @@
 
       .print-logo {
         flex-shrink: 0; 
-        width: 200px; /* 1. Aumentamos el ancho para que el logo se vea más grande */
+        width: 200px; 
         text-align: center;
-        margin-right: 40px; /* 2. Esto lo empuja desde el borde derecho hacia el centro */
+        margin-right: 40px; 
         
         img {
           width: 100%; 
           height: auto; 
-          max-height: 105px; /* 3. Aumentamos el tope de altura (antes 85px) */
+          max-height: 100px; /* Ajustado por la nueva altura total */
           object-fit: contain; 
           mix-blend-mode: multiply; 
           filter: grayscale(100%) contrast(150%);
@@ -292,7 +301,7 @@
       padding-top: 4px;
 
       p {
-        font-size: 11.5px; /* Letra perfecta para que la dirección larguísima entre completa */
+        font-size: 11.5px; 
         margin-bottom: 4px;
         line-height: 1.15;
       }
