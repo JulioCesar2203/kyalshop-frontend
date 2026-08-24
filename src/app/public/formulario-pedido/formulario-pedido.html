@@ -561,8 +561,18 @@
             type="button"
             class="btn btn-primary w-100 py-2 fw-bold"
             (click)="agendar()"
+            [disabled]="cargando"
           >
-            Agendar y ver resumen <i class="bi bi-calendar-check ms-1"></i>
+            <!-- Mostrar texto normal si no está cargando -->
+            <ng-container *ngIf="!cargando">
+              Agendar y ver resumen <i class="bi bi-calendar-check ms-1"></i>
+            </ng-container>
+            
+            <!-- Mostrar spinner si está cargando -->
+            <ng-container *ngIf="cargando">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Procesando...
+            </ng-container>
           </button>
         </div>
       </form>

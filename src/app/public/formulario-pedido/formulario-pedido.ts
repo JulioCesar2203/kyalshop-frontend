@@ -41,6 +41,7 @@ export class FormularioPedidoComponent implements OnInit {
   agenciasOlva: any[] = [];
   agenciasOlvaFiltradas: any[] = [];
   mostrarDropdownOlva: boolean = false;
+  cargando: boolean = false;
 
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
@@ -280,6 +281,8 @@ export class FormularioPedidoComponent implements OnInit {
 
   // --- ACCIÓN PRINCIPAL ---
   agendar() {
+    if (this.cargando) return;
+
     if (this.pedidoForm.invalid) {
       this.pedidoForm.markAllAsTouched();
 
@@ -318,7 +321,7 @@ export class FormularioPedidoComponent implements OnInit {
       codigoCliente: form.codigoCliente || null,
       marca: this.marcaActual,
       fechaEnvio: form.fechaEnvio,
-      agenciaShalom:
+      agenciaRecojo:
         form.tipoEnvio === 'shalom'
           ? form.agenciaShalom
           : form.tipoEnvio === 'olva'
@@ -329,8 +332,11 @@ export class FormularioPedidoComponent implements OnInit {
       referencia: form.tipoEnvio === 'delivery' ? form.referencia : null,
     };
 
+    this.cargando = true;
+
     this.pedidoService.crearPedido(nuevoPedido).subscribe({
       next: (res: any) => {
+        this.cargando = false;
         if (res.success) {
           this.pedidoRegistrado = res.data;
           this.mostrarResumen = true;
@@ -345,11 +351,14 @@ export class FormularioPedidoComponent implements OnInit {
         }
       },
       error: (err) => {
+        this.cargando = false;
         console.error('Error HTTP:', err);
+        const mensajeError = err.error?.message || 'No pudimos conectar con el servidor.';
+        
         Swal.fire({
           icon: 'error',
-          title: 'Error de conexión',
-          text: 'No pudimos conectar con el servidor.',
+          title: 'Aviso',
+          text: mensajeError,
           confirmButtonColor: '#0d6efd',
         });
       },

@@ -127,8 +127,8 @@
               <!-- Caja Gris -->
               <div class="agencia-detalle flex-grow-1 m-0">
                 <i class="bi bi-shop text-secondary me-2"></i>
-                <span *ngIf="pedido.metodoRecibo === 'shalom'"><strong>Shalom:</strong> {{ pedido.agenciaShalom }}</span>
-                <span *ngIf="pedido.metodoRecibo === 'olva'"><strong>Olva Courier:</strong> {{ pedido.agenciaShalom }}</span>
+                <span *ngIf="pedido.metodoRecibo === 'shalom'"><strong>Shalom:</strong> {{ pedido.agenciaRecojo }}</span>
+                <span *ngIf="pedido.metodoRecibo === 'olva'"><strong>Olva Courier:</strong> {{ pedido.agenciaRecojo }}</span>
                 <span *ngIf="pedido.metodoRecibo === 'delivery'"><strong>Delivery:</strong> {{ pedido.distrito }} - {{ pedido.direccion }} | Ref: {{ pedido.referencia }}</span>
               </div>
               
@@ -211,7 +211,7 @@
           <strong *ngIf="pedido.metodoRecibo === 'shalom'">Agencia Shalom:</strong>
           <strong *ngIf="pedido.metodoRecibo === 'olva'">Agencia Olva Courier:</strong>
           <strong *ngIf="pedido.metodoRecibo === 'delivery'">Delivery:</strong>
-          {{ pedido.metodoRecibo === 'delivery' ? (pedido.distrito + ' - ' + pedido.direccion) : pedido.agenciaShalom }}
+          {{ pedido.metodoRecibo === 'delivery' ? (pedido.distrito + ' - ' + pedido.direccion) : pedido.agenciaRecojo }}
         </p>
         
         <div class="footer-bottom">
