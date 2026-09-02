@@ -294,7 +294,7 @@ export class FormularioPedidoComponent implements OnInit {
         Swal.fire({
           icon: 'warning',
           title: 'Fecha no permitida',
-          text: 'Recuerda que solo realizamos despachos los días Lunes y Martes. Por favor, selecciona una fecha válida.',
+          text: 'Recuerda que solo realizamos despachos los días Lunes, Martes y Sábados. Por favor, selecciona una fecha válida.',
           confirmButtonColor: '#0d6efd',
           confirmButtonText: 'Entendido',
         });
