@@ -32,8 +32,15 @@
         </div>
       </div>
 
-      <button type="submit" class="btn w-100 fw-bold py-2 text-white shadow-sm" style="background-color: #d32f2f; border-color: #d32f2f;">
-        INGRESAR
+      <button type="submit" class="btn w-100 fw-bold py-2 text-white shadow-sm" style="background-color: #d32f2f; border-color: #d32f2f;" [disabled]="cargando">
+        <ng-container *ngIf="!cargando">
+          INGRESAR
+        </ng-container>
+      
+        <ng-container *ngIf="cargando">
+          <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+          INGRESANDO...
+        </ng-container>
       </button>
     </form>
   </div>

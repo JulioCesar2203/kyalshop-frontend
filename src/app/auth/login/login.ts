@@ -5,10 +5,11 @@ import { LoginService } from '../services/login.service';
 import Swal from 'sweetalert2';
 import { LoginRequestDto } from '../interfaces/auth.interface';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
@@ -16,6 +17,7 @@ export class LoginComponent {
   username = '';
   password = '';
   showPassword = false;
+  cargando = false;
   
   private authService = inject(LoginService);
   private storageService = inject(StorageService);
@@ -36,8 +38,11 @@ export class LoginComponent {
       password: this.password
     };
 
+    this.cargando = true;
+
     this.authService.login(request).subscribe({
       next: (res) => {
+        this.cargando = false;
         if (res.success && res.data) {
           this.storageService.saveSession(res.data.token, res.data);
           
@@ -53,6 +58,7 @@ export class LoginComponent {
         }
       },
       error: (err) => {
+        this.cargando = false;
         const mensajeError = err.error?.message || 'Error al conectar con el servidor';
         Swal.fire('Error', mensajeError, 'error');
       }
